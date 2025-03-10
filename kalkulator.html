@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content= "width=device-width, initial-scale=1.0">
+    <title>Kalkulator Keterlambatan KA</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        img {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <img src="train.png" alt="Kereta Api">
+    <div class="container">
+        <h2>Kalkulator Keterlambatan KA</h2>
+        <label for="type">Pilih Jenis:</label>
+        <select id="type" onchange="toggleInput()">
+            <option value="KA">Kereta Api</option>
+            <option value="L">Lokomotif Dinas</option>
+        </select>
+        <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L" onkeypress="handleKeyPress(event)">
+        <input type="time" id="realTime" onkeypress="handleKeyPress(event)">
+        <button onclick="calculateDelay()">Hitung Keterlambatan</button>
+        <p class="result" id="result"></p>
+    </div>
+
+    <script>
+        const trainSchedule = {
+            "3330": "12:38", "3331": "07:05", "3332": "18:08", "3333": "10:20",
+            "3334": "20:38", "3335": "17:45", "3336": "03:07", "3337": "00:20",
+            "3440": "07:38", "3441": "07:36", "3442": "15:08", "3443": "14:21",
+            "3444": "22:38", "3445": "21:51", "3560": "04:08", "3561": "10:25",
+            "3562": "10:07", "3563": "19:55", "3564": "14:07", "3565": "21:15",
+            "3566": "18:07", "3567": "01:12", "3568": "00:07", "3569": "03:20",
+            "3660": "09:07", "3661": "05:30", "3662": "14:07", "3663": "10:55",
+            "3664": "19:07", "3665": "17:00", "3666": "02:37", "3667": "23:00",
+            "3770": "03:38", "3771": "03:11", "3772": "06:07", "3773": "05:41",
+            "3774": "09:38", "3775": "07:11", "3776": "11:07", "3777": "08:10",
+            "3778": "15:39", "3779": "12:55", "3780": "16:38", "3781": "14:11",
+            "3782": "20:23", "3783": "14:41", "3784": "22:23", "3785": "19:41",
+            "3786": "23:40", "3787": "22:11", "3788": "00:55", "3789": "01:41",
+            "L3330": "13:21", "L3331": "01:02", "L3332": "18:38", "L3333": "04:05",
+            "L3334": "22:29", "L3335": "12:15", "L3336": "03:36", "L3337": "18:02",
+            "L3440": "09:36", "L3441": "03:50", "L3442": "15:45", "L3443": "11:02",
+            "L3444": "23:23", "L3445": "17:48"
+        };
+
+        function calculateDelay() {
+            let trainNumber = document.getElementById("trainNumber").value.trim().toUpperCase();
+            let realTime = document.getElementById("realTime").value;
+            let result = document.getElementById("result");
+            
+            if (!trainSchedule[trainNumber]) {
+                result.textContent = "Nomor KA/L tidak ditemukan";
+                return;
+            }
+
+            if (!realTime) {
+                result.textContent = "Masukkan waktu kedatangan atau keberangkatan";
+                return;
+            }
+
+            let [schedHours, schedMinutes] = trainSchedule[trainNumber].split(":" ).map(Number);
+            let [realHours, realMinutes] = realTime.split(":" ).map(Number);
+            let schedTotal = schedHours * 60 + schedMinutes;
+            let realTotal = realHours * 60 + realMinutes;
+            let diff = realTotal - schedTotal;
+
+            result.textContent = diff > 0 ? `+${diff} menit` : `${diff} menit`;
+        }
+
+        function toggleInput() {
+            let type = document.getElementById("type").value;
+            let trainInput = document.getElementById("trainNumber");
+            
+            if (type === "L" && !trainInput.value.startsWith("L")) {
+                trainInput.value = "L";
+            }
+        }
+    </script>
+</body>
+</html>
