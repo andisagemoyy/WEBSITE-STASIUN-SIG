@@ -57,11 +57,11 @@
 <body>
     <img src="train.png" alt="Kereta Api">
     <div class="container">
-        <h2>Kalkulator Keterlambatan KA</h2>
-        <label for="type">Pilih Jenis:</label>
-        <select id="type">
-            <option value="KA">Kereta Api</option>
-            <option value="L">Lokomotif Dinas</option>
+        <h2 class="shake">Kalkulator Keterlambatan KA (SIG)</h2>
+<h3 class="shake">Karya anak-anak Simpang</h3>
+       
+        
+        
         </select>
         <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L">
         <input type="time" id="realTime">
@@ -143,5 +143,18 @@
         }
     </script>
     
+<script>document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("trainNumber").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            calculateDelay();
+        }
+    });
+
+    document.getElementById("realTime").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            calculateDelay();
+        }
+    });
+});</script>    
 </body>
 </html>
