@@ -133,7 +133,13 @@
                 delayCalculation = `(${sign}${Math.abs(delayMinutes)})`;
             }
 
-            let status = parseInt(trainNumber) % 2 === 0 ? "datang" : "berangkat";
+            let status = "";
+if (trainNumber.startsWith("L")) {
+    status = parseInt(trainNumber.substring(1)) % 2 === 0 ? "berangkat" : "datang"; // L genap = Berangkat, L ganjil = Datang
+} else {
+    status = parseInt(trainNumber) % 2 === 0 ? "datang" : "berangkat"; // KA genap = Datang, KA ganjil = Berangkat
+}
+
 
             resultElement.innerHTML = `
                 <span class='gapeka-time'>Jadwal GAPEKA: ${gapekaTime} (${status})</span><br>
