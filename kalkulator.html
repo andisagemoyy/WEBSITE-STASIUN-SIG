@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content= "width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Keterlambatan KA</title>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,6 +44,10 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .gapeka-time {
+            font-weight: bold;
+            color: #ff4500;
+        }
         img {
             width: 100px;
             margin-bottom: 15px;
@@ -56,18 +59,17 @@
     <div class="container">
         <h2>Kalkulator Keterlambatan KA</h2>
         <label for="type">Pilih Jenis:</label>
-        <select id="type" onchange="toggleInput()">
+        <select id="type">
             <option value="KA">Kereta Api</option>
             <option value="L">Lokomotif Dinas</option>
         </select>
-        <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L" onkeypress="handleKeyPress(event)">
-        <input type="time" id="realTime" onkeypress="handleKeyPress(event)">
+        <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L">
+        <input type="time" id="realTime">
         <button onclick="calculateDelay()">Hitung Keterlambatan</button>
         <p class="result" id="result"></p>
     </div>
-
     <script>
-        const trainSchedule = {
+         const trainSchedule = {
             "3330": "12:38", "3331": "07:05", "3332": "18:08", "3333": "10:20",
             "3334": "20:38", "3335": "17:45", "3336": "03:07", "3337": "00:20",
             "3440": "07:38", "3441": "07:36", "3442": "15:08", "3443": "14:21",
@@ -95,23 +97,51 @@
             "L3782": "21:38", "L3783": "10:11", "L3784": "23:07", "L3785": "14:35",
             "L3786": "00:05", "L3787": "17:33", "L3788": "02:41", "L3789": "20:09"
         };
-        
+    
         function calculateDelay() {
-            let trainNumber = document.getElementById("trainNumber").value.trim().toUpperCase();
-            let realTime = document.getElementById("realTime").value;
-            let result = document.getElementById("result");
-            
-            if (!trainSchedule[trainNumber] || !realTime) {
-                result.textContent = "Nomor KA/L tidak ditemukan atau waktu tidak valid";
+            const trainNumber = document.getElementById("trainNumber").value;
+            const realTime = document.getElementById("realTime").value;
+            const resultElement = document.getElementById("result");
+    
+            if (!trainSchedule[trainNumber]) {
+                resultElement.innerHTML = "Nomor KA tidak ditemukan!";
                 return;
             }
-            let [schedHours, schedMinutes] = trainSchedule[trainNumber].split(":" ).map(Number);
-            let [realHours, realMinutes] = realTime.split(":" ).map(Number);
-            let schedTotal = schedHours * 60 + schedMinutes;
-            let realTotal = realHours * 60 + realMinutes;
-            let diff = realTotal - schedTotal;
-            result.textContent = diff >= 0 ? `+${diff} menit` : `${diff} menit`;
+    
+            const gapekaTime = trainSchedule[trainNumber];
+            const [gapekaHours, gapekaMinutes] = gapekaTime.split(":").map(Number);
+            const [realHours, realMinutes] = realTime.split(":").map(Number);
+    
+            const gapekaTotalMinutes = (gapekaHours * 60) + gapekaMinutes;
+            const realTotalMinutes = (realHours * 60) + realMinutes;
+    
+            let delayMinutes = realTotalMinutes - gapekaTotalMinutes;
+            let delayMessage = "Tepat waktu";
+            let delayCalculation = "(0)";
+    
+            if (delayMinutes !== 0) {
+                let hours = Math.floor(Math.abs(delayMinutes) / 60);
+                let minutes = Math.abs(delayMinutes) % 60;
+                let sign = delayMinutes > 0 ? "+" : "-";
+                delayMessage = delayMinutes > 0
+                    ? `Terlambat ${hours} jam ${minutes} menit`
+                    : `Lebih cepat ${hours} jam ${minutes} menit`;
+                delayCalculation = `(${sign}${Math.abs(delayMinutes)})`;
+            }
+    
+            let status = "";
+            if (trainNumber.startsWith("L")) {
+                status = parseInt(trainNumber.substring(1)) % 2 === 0 ? "berangkat" : "datang";
+            } else {
+                status = parseInt(trainNumber) % 2 === 0 ? "datang" : "berangkat";
+            }
+    
+            resultElement.innerHTML = `
+                <span class='gapeka-time'>Jadwal GAPEKA: ${gapekaTime} (${status})</span><br>
+                ${delayMessage} ${delayCalculation}
+            `;
         }
     </script>
+    
 </body>
 </html>
