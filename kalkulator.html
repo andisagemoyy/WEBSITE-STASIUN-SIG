@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Keterlambatan KA</title>
+    <h1></h1>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -48,25 +49,33 @@
             font-weight: bold;
             color: #ff4500;
         }
-        img {
-            width: 100px;
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
-    <img src="train.png" alt="Kereta Api">
+    <h2>Kalkulator Keterlambatan KA (SIG)</h2>
+    <img src="logo (2).png" alt="Kereta Api">
     
     <h2>Kalkulator Keterlambatan KA (SIG)</h2>
     <p id="datetime">⏳ Memuat waktu...</p>
     <h3>Karya anak-anak Simpang</h3>
-
     <div class="container">
         <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L">
         <input type="time" id="realTime">
+        <br>
+        <input type="checkbox" id="yesterdayCheckbox"> <label for="yesterdayCheckbox">Yesterday</label>
+        <br>
         <button onclick="calculateDelay()">Hitung Keterlambatan</button>
         <p class="result" id="result"></p>
-        <button onclick="goToHome()">Kembali ke Beranda</button>
+        <script>function setRealTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, "0");
+            const minutes = now.getMinutes().toString().padStart(2, "0");
+            document.getElementById("realTime").value = `${hours}:${minutes}`;
+        }
+        
+        // Atur waktu real-time saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", setRealTime);
+        </script>
     </div>
 
     <script>
@@ -102,9 +111,11 @@
     "L3782": "21:38", "L3783": "10:11", "L3784": "23:07", "L3785": "14:35",
     "L3786": "00:05", "L3787": "17:33", "L3788": "02:41", "L3789": "20:09"
 };
+
         function calculateDelay() {
             const trainNumber = document.getElementById("trainNumber").value;
             const realTime = document.getElementById("realTime").value;
+            const isYesterday = document.getElementById("yesterdayCheckbox").checked;
             const resultElement = document.getElementById("result");
 
             if (!trainSchedule[trainNumber]) {
@@ -117,80 +128,31 @@
             const [realHours, realMinutes] = realTime.split(":").map(Number);
 
             const gapekaTotalMinutes = (gapekaHours * 60) + gapekaMinutes;
-            const realTotalMinutes = (realHours * 60) + realMinutes;
+            let realTotalMinutes = (realHours * 60) + realMinutes;
 
-            let delayMinutes = realTotalMinutes - gapekaTotalMinutes;
-            let delayMessage = "Tepat waktu";
-            let delayCalculation = "(0)";
+            // Hitung keterlambatan
+            let finalDelayMinutes = realTotalMinutes - gapekaTotalMinutes;
 
-            if (delayMinutes !== 0) {
-                let hours = Math.floor(Math.abs(delayMinutes) / 60);
-                let minutes = Math.abs(delayMinutes) % 60;
-                let sign = delayMinutes > 0 ? "+" : "-";
-                delayMessage = delayMinutes > 0
-                    ? `Terlambat ${hours} jam ${minutes} menit`
-                    : `Lebih cepat ${hours} jam ${minutes} menit`;
-                delayCalculation = `(${sign}${Math.abs(delayMinutes)})`;
+            // Jika Yesterday dicentang, kurangi hasil akhir dengan 1440 menit
+            if (isYesterday) {
+                finalDelayMinutes -= 1440;
             }
 
+            // Tentukan status Datang/Berangkat
             let status = "";
-if (trainNumber.startsWith("L")) {
-    status = parseInt(trainNumber.substring(1)) % 2 === 0 ? "berangkat" : "datang"; // L genap = Berangkat, L ganjil = Datang
-} else {
-    status = parseInt(trainNumber) % 2 === 0 ? "datang" : "berangkat"; // KA genap = Datang, KA ganjil = Berangkat
-}
+            if (trainNumber.startsWith("L")) {
+                status = parseInt(trainNumber.substring(1)) % 2 === 0 ? "Berangkat" : "Datang";
+            } else {
+                status = parseInt(trainNumber) % 2 === 0 ? "Datang" : "Berangkat";
+            }
 
-
+            // Tampilkan hasil
             resultElement.innerHTML = `
                 <span class='gapeka-time'>Jadwal GAPEKA: ${gapekaTime} (${status})</span><br>
-                ${delayMessage} ${delayCalculation}
+                ${finalDelayMinutes >= 0 ? `Terlambat ${Math.floor(finalDelayMinutes / 60)} jam ${finalDelayMinutes % 60} menit (+${finalDelayMinutes})`
+                : `Lebih cepat ${Math.abs(Math.floor(finalDelayMinutes / 60))} jam ${Math.abs(finalDelayMinutes % 60)} menit (${finalDelayMinutes})`}
             `;
         }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("trainNumber").addEventListener("keypress", function(event) {
-                if (event.key === "Enter") {
-                    calculateDelay();
-                }
-            });
-
-            document.getElementById("realTime").addEventListener("keypress", function(event) {
-                if (event.key === "Enter") {
-                    calculateDelay();
-                }
-            });
-        });
-
-        function goToHome() {
-            window.location.href = "index.html";
-        }function updateDateTime() {
-    const now = new Date();
-    
-    // Format Hari
-    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const dayName = days[now.getDay()];
-
-    // Format Tanggal
-    const date = now.getDate();
-    const month = now.toLocaleString("id-ID", { month: "long" }); // Nama bulan dalam bahasa Indonesia
-    const year = now.getFullYear();
-
-    // Format Waktu
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const seconds = now.getSeconds().toString().padStart(2, "0");
-
-    // Gabungkan semuanya
-    const formattedDateTime = `${dayName}, ${date} ${month} ${year} | ${hours}:${minutes}:${seconds} WIB`;
-
-    // Tampilkan di HTML
-    document.getElementById("datetime").innerText = formattedDateTime;
-}
-
-// Jalankan update waktu setiap detik
-setInterval(updateDateTime, 1000);
-document.addEventListener("DOMContentLoaded", updateDateTime);
-
     </script>
 </body>
 </html>
