@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Keterlambatan KA</title>
-    <h1></h1>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,7 +23,7 @@
             max-width: 400px;
             width: 100%;
         }
-        input, button, select {
+        input, button {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -49,15 +48,18 @@
             font-weight: bold;
             color: #ff4500;
         }
+        /* Tambahkan aturan untuk logo */
+        .logo {
+            width: 120px; /* Sesuaikan ukuran */
+            height: auto;
+        }
     </style>
 </head>
 <body>
-    <h2>Kalkulator Keterlambatan KA (SIG)</h2>
-    <img src="logo (2).png" alt="Kereta Api">
-    
+    <img src="logo (2).png" alt="Kereta Api" class="logo">
     <h2>Kalkulator Keterlambatan KA (SIG)</h2>
     <p id="datetime">⏳ Memuat waktu...</p>
-    <h3>Karya anak-anak Simpang</h3>
+    
     <div class="container">
         <input type="text" id="trainNumber" placeholder="Masukkan Nomor KA/L">
         <input type="time" id="realTime">
@@ -66,16 +68,7 @@
         <br>
         <button onclick="calculateDelay()">Hitung Keterlambatan</button>
         <p class="result" id="result"></p>
-        <script>function setRealTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, "0");
-            const minutes = now.getMinutes().toString().padStart(2, "0");
-            document.getElementById("realTime").value = `${hours}:${minutes}`;
-        }
-        
-        // Atur waktu real-time saat halaman dimuat
-        document.addEventListener("DOMContentLoaded", setRealTime);
-        </script>
+        <button onclick="goToHome()">Kembali ke Beranda</button>
     </div>
 
     <script>
@@ -111,33 +104,55 @@
     "L3782": "21:38", "L3783": "10:11", "L3784": "23:07", "L3785": "14:35",
     "L3786": "00:05", "L3787": "17:33", "L3788": "02:41", "L3789": "20:09"
 };
-
+    
+        function updateDateTime() {
+            const now = new Date();
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const dayName = days[now.getDay()];
+            const date = now.getDate();
+            const month = now.toLocaleString("id-ID", { month: "long" });
+            const year = now.getFullYear();
+            const hours = now.getHours().toString().padStart(2, "0");
+            const minutes = now.getMinutes().toString().padStart(2, "0");
+            const seconds = now.getSeconds().toString().padStart(2, "0");
+    
+            const formattedDateTime = `${dayName}, ${date} ${month} ${year} | ${hours}:${minutes}:${seconds} WIB`;
+            document.getElementById("datetime").innerText = formattedDateTime;
+        }
+    
+        function setRealTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, "0");
+            const minutes = now.getMinutes().toString().padStart(2, "0");
+            document.getElementById("realTime").value = `${hours}:${minutes}`;
+        }
+    
         function calculateDelay() {
             const trainNumber = document.getElementById("trainNumber").value;
             const realTime = document.getElementById("realTime").value;
             const isYesterday = document.getElementById("yesterdayCheckbox").checked;
             const resultElement = document.getElementById("result");
-
+    
             if (!trainSchedule[trainNumber]) {
                 resultElement.innerHTML = "Nomor KA tidak ditemukan!";
                 return;
             }
-
+    
             const gapekaTime = trainSchedule[trainNumber];
             const [gapekaHours, gapekaMinutes] = gapekaTime.split(":").map(Number);
             const [realHours, realMinutes] = realTime.split(":").map(Number);
-
+    
             const gapekaTotalMinutes = (gapekaHours * 60) + gapekaMinutes;
             let realTotalMinutes = (realHours * 60) + realMinutes;
-
+    
             // Hitung keterlambatan
             let finalDelayMinutes = realTotalMinutes - gapekaTotalMinutes;
-
+    
             // Jika Yesterday dicentang, kurangi hasil akhir dengan 1440 menit
             if (isYesterday) {
                 finalDelayMinutes -= 1440;
             }
-
+    
             // Tentukan status Datang/Berangkat
             let status = "";
             if (trainNumber.startsWith("L")) {
@@ -145,7 +160,7 @@
             } else {
                 status = parseInt(trainNumber) % 2 === 0 ? "Datang" : "Berangkat";
             }
-
+    
             // Tampilkan hasil
             resultElement.innerHTML = `
                 <span class='gapeka-time'>Jadwal GAPEKA: ${gapekaTime} (${status})</span><br>
@@ -153,6 +168,32 @@
                 : `Lebih cepat ${Math.abs(Math.floor(finalDelayMinutes / 60))} jam ${Math.abs(finalDelayMinutes % 60)} menit (${finalDelayMinutes})`}
             `;
         }
+    
+        function goToHome() {
+            window.location.href = "index.html";
+        }
+    
+        // Menjalankan kalkulasi saat menekan ENTER di input KA atau waktu
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("trainNumber").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    calculateDelay();
+                }
+            });
+    
+            document.getElementById("realTime").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    calculateDelay();
+                }
+            });
+        });
+    
+        // Jalankan update waktu setiap detik
+        setInterval(updateDateTime, 1000);
+        document.addEventListener("DOMContentLoaded", () => {
+            updateDateTime();
+            setRealTime();
+        });
+        
     </script>
-</body>
-</html>
+    
