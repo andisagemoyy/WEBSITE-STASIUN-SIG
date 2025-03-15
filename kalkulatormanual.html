@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Keterlambatan KA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f9;
+            background-image: url('papteam.png'); /* Ganti dengan lokasi gambarmu */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            width: 90%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kalkulator Keterlambatan KA MANUAL</h2>
+        
+        <div class="form-group">
+            <label for="nomorKA">Nomor KA:</label>
+            <input type="text" id="nomorKA" placeholder="Masukkan Nomor KA">
+        </div>
+        
+        <div class="form-group">
+            <label for="jamReal">Jam Real</label>
+            <input type="time" id="jamReal">
+        </div>
+        
+        <div class="form-group">
+            <label for="jamGapeka">Jam GAPEKA</label>
+            <input type="time" id="jamGapeka">
+        </div>
+        
+        <div class="checkbox-label">
+            <input type="checkbox" id="yesterday"> 
+            <label for="yesterday">Yesterday</label>
+        </div>
+        
+        <button onclick="hitungKeterlambatan()">Hitung</button>
+        
+        <div class="result" id="hasil"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                    hitungKeterlambatan();
+                }
+            });
+        });
+
+        function hitungKeterlambatan() {
+            let nomorKA = document.getElementById("nomorKA").value;
+            let jamReal = document.getElementById("jamReal").value;
+            let jamGapeka = document.getElementById("jamGapeka").value;
+            let yesterdayChecked = document.getElementById("yesterday").checked;
+            
+            if (!nomorKA || !jamReal || !jamGapeka) {
+                document.getElementById("hasil").innerText = "Silakan isi semua kolom";
+                return;
+            }
+            
+            let [realJam, realMenit] = jamReal.split(":").map(Number);
+            let [gapekaJam, gapekaMenit] = jamGapeka.split(":").map(Number);
+            
+            let totalReal = realJam * 60 + realMenit;
+            let totalGapeka = gapekaJam * 60 + gapekaMenit;
+            
+            let keterlambatan = totalReal - totalGapeka;
+            
+            if (yesterdayChecked) {
+                keterlambatan -= 1440;
+            }
+            
+            let hasilText = `KA ${nomorKA} `;
+            
+            if (keterlambatan > 0) {
+                hasilText += `Terlambat ${Math.floor(keterlambatan / 60)} jam ${keterlambatan % 60} menit (+${keterlambatan} menit)`;
+            } else if (keterlambatan < 0) {
+                hasilText += `Lebih cepat ${Math.abs(Math.floor(keterlambatan / 60))} jam ${Math.abs(keterlambatan % 60)} menit (${keterlambatan} menit)`;
+            } else {
+                hasilText += "Tepat waktu";
+            }
+            
+            document.getElementById("hasil").innerText = hasilText;
+        }
+    </script>
+</body>
+</html>
