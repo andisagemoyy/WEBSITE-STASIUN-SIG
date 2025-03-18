@@ -64,7 +64,7 @@
     /* Replace with your image path */
     background-size: cover;
     background-position: center;
-    filter: blur(5px);
+    filter: none ;
     z-index: -1;
     /* Ensures the pseudo-element is behind the content */
 }
