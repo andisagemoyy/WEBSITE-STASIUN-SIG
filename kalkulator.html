@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Keterlambatan KA</title>
     <link rel="shortcut icon" href="assets/logo (2).png" type="image/x-icon">
+    <!-- Tambahan: Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,9 +40,14 @@
             color: white;
             cursor: pointer;
             border: none;
+            transition: background 0.3s, transform 0.3s;
         }
         button:hover {
             background: #0056b3;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(1px);
         }
         .result {
             font-size: 18px;
@@ -55,6 +62,12 @@
         .logo {
             width: 100px; /* Sesuaikan ukuran */
             height: auto;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         .checkbox-container {
             display: flex;
@@ -86,6 +99,11 @@
             font-size: 24px;
             font-weight: bold;
             animation: blink 1s infinite; /* Efek kelap-kelip */
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
         .waktu {
             font-size: 18px;
@@ -130,6 +148,280 @@
             color: rgba(0, 0, 0, 0.3); /* Teks transparan */
             font-style: italic;
         }
+
+        /* TAMBAHAN: CSS untuk floating info button */
+        .info-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #0073e6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .info-button:hover {
+            transform: scale(1.1);
+            background-color: #005bb5;
+        }
+
+        /* TAMBAHAN: CSS untuk modal */
+        .schedule-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .schedule-modal.show {
+            display: flex;
+        }
+
+        .schedule-content {
+            background-color: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+            color: #333; /* Warna teks default dalam modal */
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #777;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-button:hover {
+            color: #000;
+        }
+
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #0073e6;
+            padding-bottom: 10px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            color: #333; /* Warna default teks tabel */
+        }
+
+        .schedule-table th {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .schedule-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+            color: #333; /* Warna teks di sel tabel */
+        }
+
+        /* PERBAIKAN: Memperjelas warna nomor KA/LOK di tabel */
+        .schedule-table td:first-child {
+            font-weight: bold;
+            color: #0059b3; /* Warna biru tua */
+        }
+
+        .schedule-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .time-block {
+            margin-bottom: 15px;
+            border-left: 4px solid #0073e6;
+            padding-left: 10px;
+            color: #333; /* Warna teks untuk blok waktu */
+        }
+
+        .time-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #0073e6;
+            font-size: 18px;
+        }
+
+        /* DIPERTAHANKAN DAN DITINGKATKAN: Warna status */
+        .departure {
+            color: #00b300; /* Hijau lebih cerah untuk berangkat */
+            font-weight: bold;
+            background-color: rgba(0, 179, 0, 0.1); /* Background hijau transparan */
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+
+        .arrival {
+            color: #e60000; /* Merah lebih cerah untuk datang */
+            font-weight: bold;
+            background-color: rgba(230, 0, 0, 0.1); /* Background merah transparan */
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+
+        /* Tambahan: Tabs untuk jadwal */
+        .schedule-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .schedule-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            color: #333; /* Warna teks tab */
+            border: none;
+            transition: 0.3s;
+            font-weight: bold;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+
+        .schedule-tab.active {
+            background-color: #0073e6;
+            color: white;
+        }
+
+        .schedule-tab:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+        .tab-content {
+            display: none;
+            color: #333; /* Warna teks konten tab */
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeEffect 0.5s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333; /* Warna teks input */
+        }
+
+        .train-list {
+            max-height: 400px;
+            overflow-y: auto;
+            color: #333; /* Warna teks daftar kereta */
+        }
+
+        .train-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333; /* Warna teks item kereta */
+        }
+
+        .train-number {
+            font-weight: bold;
+            color: #0059b3; /* Warna biru tua */
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #555; /* Warna yang lebih gelap untuk teks 'tidak ada hasil' */
+            font-style: italic;
+        }
+        
+        /* PERBAIKAN: Memastikan teks di keterangan memiliki warna yang jelas */
+        #legend {
+            color: #333;
+            font-size: 15px;
+        }
+        
+        #legend ul {
+            padding-left: 20px;
+        }
+        
+        #legend li {
+            margin-bottom: 8px;
+        }
+        
+        #legend h3 {
+            color: #0073e6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        /* PERBAIKAN: Mempertegas styling untuk nomor KA/LOK */
+        .bold-train-number {
+            font-weight: 700;
+            font-size: 15px;
+            color: #0059b3; /* Warna biru tua */
+        }
+
+        /* PERBAIKAN: Loading style */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #0073e6;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -147,14 +439,68 @@
             <label for="yesterdayCheckbox">KA/LOK UNTUK BESOK</label>
         </div>
         <br>
-        <button onclick="calculateDelay()">Hitung Keterlambatan</button>
+        <button onclick="calculateDelay()"><i class="fas fa-calculator"></i> Hitung Keterlambatan</button>
         <p class="result" id="result"></p>
-        <button onclick="goToHome()">Kembali ke Beranda</button>
-        <button onclick="goToManual()">Kalkulator Manual</button>
-        <button onclick="goTopembalik()">Pembalik Nomor Gerbong</button>
+        <button onclick="goToHome()"><i class="fas fa-home"></i> Kembali ke Beranda</button>
+        <button onclick="goToManual()"><i class="fas fa-sliders-h"></i> Kalkulator Manual</button>
+        <button onclick="goTopembalik()"><i class="fas fa-exchange-alt"></i> Pembalik Nomor Gerbong</button>
         
-        <!-- Watermark -->
-        <div class="watermark">created by Andyking</div>
+       
+
+    <!-- Alternatif 1: Ikon Kereta -->
+<div class="info-button" onclick="openScheduleModal()">
+    <i class="fas fa-train"></i>
+</div>
+
+    <!-- TAMBAHAN: Schedule Modal -->
+    <div id="scheduleModal" class="schedule-modal">
+        <div class="schedule-content">
+            <div class="close-button" onclick="closeScheduleModal()">×</div>
+            
+            <div class="schedule-header">
+                <h2><i class="fas fa-train"></i> Jadwal Kereta Api</h2>
+                <p>Informasi jadwal berdasarkan GAPEKA STASIUN SIG</p>
+            </div>
+
+            <div class="schedule-tabs">
+                <button class="schedule-tab active" onclick="openTab('hourly')">Berdasarkan Jam</button>
+                <button class="schedule-tab" onclick="openTab('search')">Cari KA/LOK</button>
+                <button class="schedule-tab" onclick="openTab('legend')">Keterangan</button>
+            </div>
+
+            <div id="hourly" class="tab-content active">
+                <div id="hourlySchedule">
+                    <!-- Akan diisi oleh JavaScript -->
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat jadwal...</div>
+                </div>
+            </div>
+
+            <div id="search" class="tab-content">
+                <input type="text" id="searchTrain" class="search-box" placeholder="Cari nomor KA/LOK...">
+                <div id="searchResults" class="train-list">
+                    <!-- Akan diisi oleh JavaScript -->
+                </div>
+            </div>
+
+            <div id="legend" class="tab-content">
+                <h3>Keterangan Jadwal:</h3>
+                <ul style="text-align: left; line-height: 1.6;">
+                    <li><span class="departure">BERANGKAT</span>: Kereta yang berangkat (selalu warna hijau)</li>
+                    <li><span class="arrival">DATANG</span>: Kereta yang datang (selalu warna merah)</li>
+                    <li>KA nomor <b>ganjil</b>: Berangkat</li>
+                    <li>KA nomor <b>genap</b>: Datang</li>
+                    <li>LOK nomor <b>ganjil</b>: Datang</li>
+                    <li>LOK nomor <b>genap</b>: Berangkat</li>
+                </ul>
+                <h3>Cara Menggunakan:</h3>
+                <p style="text-align: left;">
+                    1. Masukkan nomor KA/LOK pada form utama<br>
+                    2. Masukkan waktu aktual kereta<br>
+                    3. Centang "KA/LOK UNTUK BESOK" jika perlu<br>
+                    4. Klik tombol "Hitung Keterlambatan"
+                </p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -286,6 +632,194 @@
             window.location.href = "index.html";
         }
         
+        // TAMBAHAN: Fungsi untuk modal jadwal
+        function openScheduleModal() {
+            document.getElementById("scheduleModal").classList.add("show");
+            populateHourlySchedule();
+        }
+        
+        function closeScheduleModal() {
+            document.getElementById("scheduleModal").classList.remove("show");
+        }
+
+        // Tutup modal saat mengklik luar modal
+        window.addEventListener("click", function(event) {
+            const modal = document.getElementById("scheduleModal");
+            if (event.target === modal) {
+                closeScheduleModal();
+            }
+        });
+        
+        // Fungsi untuk tab jadwal
+        function openTab(tabName) {
+            // Sembunyikan semua tab content
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Nonaktifkan semua tab
+            const tabs = document.getElementsByClassName("schedule-tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Aktifkan tab yang dipilih
+            document.getElementById(tabName).classList.add("active");
+            // Aktifkan tombol tab yang dipilih
+            const activeTab = document.querySelector(`.schedule-tab[onclick="openTab('${tabName}')"]`);
+            if (activeTab) {
+                activeTab.classList.add("active");
+            }
+            
+            // Jika tab pencarian, fokuskan input pencarian
+            if (tabName === "search") {
+                document.getElementById("searchTrain").focus();
+                populateSearchResults("");
+            }
+        }
+        
+        // TAMBAHAN: Fungsi untuk membuat jadwal berdasarkan jam
+        function populateHourlySchedule() {
+            const hourlyScheduleDiv = document.getElementById("hourlySchedule");
+            
+            // Urutkan semua kereta berdasarkan waktu
+            const sortedTrains = [];
+            for (const trainNumber in trainSchedule) {
+                const time = trainSchedule[trainNumber];
+                const status = getTrainStatus(trainNumber);
+                const statusClass = status === "Berangkat" ? "departure" : "arrival";
+                
+                sortedTrains.push({
+                    trainNumber,
+                    time,
+                    status,
+                    statusClass
+                });
+            }
+            
+            // Urutkan berdasarkan waktu
+            sortedTrains.sort((a, b) => {
+                const timeA = a.time.split(":");
+                const timeB = b.time.split(":");
+                const minutesA = parseInt(timeA[0]) * 60 + parseInt(timeA[1]);
+                const minutesB = parseInt(timeB[0]) * 60 + parseInt(timeB[1]);
+                return minutesA - minutesB;
+            });
+            
+            // Buat objek untuk mengelompokkan berdasarkan jam
+            const hourlyGroups = {};
+            for (let i = 0; i < 24; i++) {
+                const hour = i.toString().padStart(2, "0");
+                hourlyGroups[hour] = [];
+            }
+            
+            // Kelompokkan kereta berdasarkan jam
+            for (const train of sortedTrains) {
+                const hour = train.time.split(":")[0];
+                hourlyGroups[hour].push(train);
+            }
+            
+            // Buat HTML untuk jadwal
+            let html = '';
+            for (let i = 0; i < 24; i++) {
+                const hour = i.toString().padStart(2, "0");
+                const trains = hourlyGroups[hour];
+                
+                if (trains.length > 0) {
+                    html += `
+                        <div class="time-block">
+                            <div class="time-header">${hour}:00 - ${hour}:59</div>
+                            <table class="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nomor KA/LOK</th>
+                                        <th>Waktu</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    for (const train of trains) {
+                        html += `
+                            <tr>
+                                <td class="bold-train-number">${train.trainNumber}</td>
+                                <td>${train.time}</td>
+                                <td class="${train.statusClass}">${train.status}</td>
+                            </tr>
+                        `;
+                    }
+                    
+                    html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            }
+            
+            hourlyScheduleDiv.innerHTML = html || "<div class='no-results'>Tidak ada jadwal ditemukan</div>";
+        }
+        
+        // TAMBAHAN: Fungsi untuk pencarian
+        function populateSearchResults(query) {
+            const searchResultsDiv = document.getElementById("searchResults");
+            const normalizedQuery = query.trim().toUpperCase();
+            
+            // Jika query kosong, tampilkan semua kereta
+            let filteredTrains = [];
+            for (const trainNumber in trainSchedule) {
+                const time = trainSchedule[trainNumber];
+                const status = getTrainStatus(trainNumber);
+                const statusClass = status === "Berangkat" ? "departure" : "arrival";
+                
+                if (normalizedQuery === "" || trainNumber.toUpperCase().includes(normalizedQuery)) {
+                    filteredTrains.push({
+                        trainNumber,
+                        time,
+                        status,
+                        statusClass
+                    });
+                }
+            }
+            
+            // Urutkan berdasarkan nomor kereta
+            filteredTrains.sort((a, b) => a.trainNumber.localeCompare(b.trainNumber));
+            
+            // Buat HTML untuk hasil pencarian
+            let html = '';
+            if (filteredTrains.length > 0) {
+                html += '<table class="schedule-table">';
+                html += `
+                    <thead>
+                        <tr>
+                            <th>Nomor KA/LOK</th>
+                            <th>Waktu</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                for (const train of filteredTrains) {
+                    html += `
+                        <tr>
+                            <td class="bold-train-number">${train.trainNumber}</td>
+                            <td>${train.time}</td>
+                            <td class="${train.statusClass}">${train.status}</td>
+                        </tr>
+                    `;
+                }
+                
+                html += '</tbody></table>';
+            } else {
+                html = "<div class='no-results'>Tidak ada kereta yang sesuai dengan pencarian</div>";
+            }
+            
+            searchResultsDiv.innerHTML = html;
+        }
+        
         // Menjalankan kalkulasi saat menekan ENTER di input KA atau waktu
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("trainNumber").addEventListener("keypress", function(event) {
@@ -299,6 +833,20 @@
                     calculateDelay();
                 }
             });
+            
+            // TAMBAHAN: Tambahkan listener untuk pencarian
+            const searchInput = document.getElementById("searchTrain");
+            if (searchInput) {
+                searchInput.addEventListener("input", function() {
+                    populateSearchResults(this.value);
+                });
+                
+                searchInput.addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        populateSearchResults(this.value);
+                    }
+                });
+            }
         });
         
         // Jalankan update waktu setiap detik
