@@ -1,10 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CY - Tab Navigasi</title>
+  <title>CY - Tab Navigasi (LIVE)</title>
+  
+  <!-- Firebase SDK - HANYA BUTUH INI -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
   <style>
     body {
       margin: 0;
@@ -37,392 +41,7 @@
     .tab-content.active {
       display: block;
     }
-  </style>
-</head>
-<body>
-  <div class="tabs">
-    <button class="tab-button active" onclick="switchTab('rmk')">CY RMK</button>
-    <button class="tab-button" onclick="switchTab('wbs')">CY WBS</button>
-    <button class="tab-button" onclick="switchTab('fms')">CY FMS</button>
-  </div>
-
-  <div id="rmk" class="tab-content active">
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>CY - Visual Interaktif Presisi</title>
-      <style>
-        body {
-          background-color: black;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          color: white;
-          font-family: sans-serif;
-          margin: 0;
-          padding: 0;
-        }
-        .yard {
-          position: relative;
-          width: 1000px;
-          height: 600px;
-        }
-        .label {
-          position: absolute;
-          left: 5px;
-          font-size: 12px;
-          background-color: rgba(255,255,255,0.1);
-          padding: 2px 6px;
-          border-radius: 4px;
-        }
-        .track {
-          transition: stroke 0.3s;
-        }
-        .input-pair {
-          display: flex;
-          position: absolute;
-          align-items: center;
-        }
-        .arrow {
-          color: white;
-          font-size: 14px;
-          margin: 0 4px;
-        }
-        .input-box {
-          width: 80px;
-          height: 20px;
-          background: transparent;
-          border: 2px solid white;
-          color: white;
-          text-align: center;
-          font-size: 12px;
-        }
-        .input-box::placeholder {
-          color: rgba(255,255,255,0.4);
-        }
-        .controls {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          background-color: rgba(0,0,0,0.7);
-          padding: 10px;
-          border-radius: 5px;
-          border: 1px solid rgba(255,255,255,0.2);
-        }
-        button {
-          background-color: rgba(80,80,80,0.5);
-          color: white;
-          border: 1px solid rgba(255,255,255,0.3);
-          border-radius: 4px;
-          padding: 5px 10px;
-          margin: 3px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-        button:hover {
-          background-color: rgba(100,100,100,0.8);
-        }
-        .status {
-          color: rgba(255,255,255,0.7);
-          font-size: 12px;
-          margin-top: 10px;
-          text-align: center;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="yard">
-        <svg width="1000" height="600" style="position: absolute; top: 0; left: 0;">
-          <!-- Jalur tetap -->
-          <polyline id="main-track" points="1000,300 850,300 800,250" stroke="white" stroke-width="2" fill="none" class="track" />
-          <polyline id="w1-w3" points="800,250 750,250" stroke="white" stroke-width="2" fill="none" class="track" />
-          <polyline id="w1-w2" points="800,250 750,350" stroke="white" stroke-width="2" fill="none" class="track" />
-    
-          <!-- CY 2 Jalur 1 -->
-          <polyline id="track-cy2-1-serong" points="750,250 700,200" stroke="white" stroke-width="2" fill="none" class="track" />
-          <polyline id="track-cy2-1-lurus" points="700,200 250,200" stroke="white" stroke-width="2" fill="none" class="track" />
-    
-          <!-- CY 2 Jalur 2 -->
-          <polyline id="track-cy2-2" points="750,250 250,250" stroke="white" stroke-width="2" fill="none" class="track" />
-    
-          <!-- CY 2 Jalur 3 -->
-          <polyline id="track-cy2-3-serong" points="750,250 700,300" stroke="white" stroke-width="2" fill="none" class="track" />
-          <polyline id="track-cy2-3-lurus" points="700,300 250,300" stroke="white" stroke-width="2" fill="none" class="track" />
-    
-          <!-- CY 3A -->
-          <polyline id="track-cy3a" points="750,350 250,350" stroke="white" stroke-width="2" fill="none" class="track" />
-    
-          <!-- CY 3B -->
-          <polyline id="track-cy3b" points="750,350 700,400 250,400" stroke="white" stroke-width="2" fill="none" class="track" />
-        </svg>
-    
-        <!-- Input Pairs -->
-        <div class="input-pair" style="top: 190px; left: 360px;">
-          <input class="input-box" id="box-cy2-1" placeholder="Ex KA" />
-          <span class="arrow">➜</span>
-          <input class="input-box" id="plan-cy2-1" placeholder="Rencana" />
-          <button onclick="depart('cy2-1')">🚉</button>
-        </div>
-        <div class="input-pair" style="top: 240px; left: 360px;">
-          <input class="input-box" id="box-cy2-2" placeholder="Ex KA" />
-          <span class="arrow">➜</span>
-          <input class="input-box" id="plan-cy2-2" placeholder="Rencana" />
-          <button onclick="depart('cy2-2')">🚉</button>
-        </div>
-        <div class="input-pair" style="top: 290px; left: 360px;">
-          <input class="input-box" id="box-cy2-3" placeholder="Ex KA" />
-          <span class="arrow">➜</span>
-          <input class="input-box" id="plan-cy2-3" placeholder="Rencana" />
-          <button onclick="depart('cy2-3')">🚉</button>
-        </div>
-        <div class="input-pair" style="top: 340px; left: 360px;">
-          <input class="input-box" id="box-cy3a" placeholder="Ex KA" />
-          <span class="arrow">➜</span>
-          <input class="input-box" id="plan-cy3a" placeholder="Rencana" />
-          <button onclick="depart('cy3a')">🚉</button>
-        </div>
-        <div class="input-pair" style="top: 390px; left: 360px;">
-          <input class="input-box" id="box-cy3b" placeholder="Ex KA" />
-          <span class="arrow">➜</span>
-          <input class="input-box" id="plan-cy3b" placeholder="Rencana" />
-          <button onclick="depart('cy3b')">🚉</button>
-        </div>
-    
-        <!-- Labels -->
-        <div class="label" style="top: 190px;">CY 2 JALUR 1</div>
-        <div class="label" style="top: 240px;">CY 2 JALUR 2</div>
-        <div class="label" style="top: 290px;">CY 2 JALUR 3</div>
-        <div class="label" style="top: 340px;">CY 3A</div>
-        <div class="label" style="top: 390px;">CY 3B</div>
-    
-        <!-- Controls -->
-        <div class="controls">
-          <button id="reset">Reset Semua</button>
-          <div class="status" id="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
-        </div>
-      </div>
-    
-      <script>
-        const trackMap = {
-          'cy2-1': 'track-cy2-1-lurus',
-          'cy2-2': 'track-cy2-2',
-          'cy2-3': 'track-cy2-3-lurus',
-          'cy3a': 'track-cy3a',
-          'cy3b': 'track-cy3b'
-        };
-    
-        function updateTracks() {
-          Object.keys(trackMap).forEach(key => {
-            const input = document.getElementById('box-' + key);
-            const track = document.getElementById(trackMap[key]);
-            track.style.stroke = input.value.trim() !== '' ? 'red' : 'white';
-          });
-        }
-    
-        function depart(key) {
-          document.getElementById('box-' + key).value = '';
-          document.getElementById('plan-' + key).value = '';
-          document.getElementById(trackMap[key]).style.stroke = 'white';
-        }
-    
-        document.addEventListener('DOMContentLoaded', () => {
-          Object.keys(trackMap).forEach(key => {
-            document.getElementById('box-' + key).addEventListener('input', updateTracks);
-          });
-    
-          document.getElementById('reset').addEventListener('click', () => {
-            Object.keys(trackMap).forEach(key => {
-              document.getElementById('box-' + key).value = '';
-              document.getElementById('plan-' + key).value = '';
-              document.getElementById(trackMap[key]).style.stroke = 'white';
-            });
-          });
-    
-          updateTracks();
-        });
-      </script>
-    </body>
-    </html>
-    
-  </div>
-
-  <div id="wbs" class="tab-content">
-    <!-- Tempelkan kode CY WBS di sini -->
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>CY WBS - Serong Jam 7</title>
-      <style>
-        body {
-          background-color: black;
-          color: white;
-          font-family: sans-serif;
-          margin: 0;
-        }
-        .yard {
-          position: relative;
-          width: 1000px;
-          height: 600px;
-          margin: auto;
-        }
-        svg {
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-        .track {
-          stroke: white;
-          stroke-width: 2;
-          fill: none;
-          transition: stroke 0.3s;
-        }
-        .track.occupied {
-          stroke: red;
-        }
-        .track.permanent {
-          stroke: white !important; /* Akan selalu berwarna putih */
-        }
-        .input-pair {
-          position: absolute;
-          display: flex;
-          align-items: center;
-        }
-        .input-box {
-          width: 70px;
-          height: 20px;
-          background: transparent;
-          border: 2px solid white;
-          color: white;
-          text-align: center;
-          font-size: 12px;
-          margin: 0 2px;
-        }
-        .arrow {
-          color: white;
-          font-size: 14px;
-        }
-        .label {
-          position: absolute;
-          font-size: 12px;
-          color: white;
-          background-color: rgba(255,255,255,0.1);
-          padding: 2px 6px;
-          border-radius: 4px;
-          left: 10px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="yard">
-        <svg width="1000" height="600">
-          <!-- Jalur 1 (perpanjang ke kiri) -->
-          <polyline id="jalur-1" points="100,100 800,100" class="track" />
-          
-          <!-- Jalur 2 (terpisah antara horizontal dan serong) -->
-          <polyline id="jalur-2-horizontal" points="100,160 540,160" class="track" />
-          <polyline id="jalur-2-diagonal" points="540,160 600,130 650,100" class="track permanent" />
-          
-          <!-- Jalur 3 (terpisah antara horizontal dan serong) -->
-          <polyline id="jalur-3-horizontal" points="100,220 360,220" class="track" />
-          <polyline id="jalur-3-diagonal" points="360,220 420,190 480,160" class="track permanent" />
-          
-          <!-- Jalur 4 (terpisah antara horizontal dan serong) -->
-          <polyline id="jalur-4-horizontal" points="100,280 260,280" class="track" />
-          <path id="jalur-4-diagonal" d="M260,280 Q300,250 360,220" class="track permanent" />
-        </svg>
-    
-        <!-- Labels -->
-        <div class="label" style="top: 90px;">WBS JALUR 1</div>
-        <div class="label" style="top: 150px;">WBS JALUR 2</div>
-        <div class="label" style="top: 210px;">WBS JALUR 3</div>
-        <div class="label" style="top: 270px;">WBS JALUR 4</div>
-    
-        <!-- Kotak Input (ditempatkan di tengah jalur lurus) -->
-        <div class="input-pair" style="top: 85px; left: 300px;">
-          <input class="input-box" id="ex-jalur-1" placeholder="Ex KA">
-          <span class="arrow">➡</span>
-          <input class="input-box" id="ren-jalur-1" placeholder="Rencana">
-          <button onclick="berangkat('jalur-1', 'ex-jalur-1', 'ren-jalur-1')">🚉</button>
-        </div>
-        
-        <div class="input-pair" style="top: 145px; left: 250px;">
-          <input class="input-box" id="ex-jalur-2" placeholder="Ex KA">
-          <span class="arrow">➡</span>
-          <input class="input-box" id="ren-jalur-2" placeholder="Rencana">
-          <button onclick="berangkat('jalur-2-horizontal', 'ex-jalur-2', 'ren-jalur-2')">🚉</button>
-        </div>
-        
-        <div class="input-pair" style="top: 205px; left: 200px;">
-          <input class="input-box" id="ex-jalur-3" placeholder="Ex KA">
-          <span class="arrow">➡</span>
-          <input class="input-box" id="ren-jalur-3" placeholder="Rencana">
-          <button onclick="berangkat('jalur-3-horizontal', 'ex-jalur-3', 'ren-jalur-3')">🚉</button>
-        </div>
-        
-        <div class="input-pair" style="top: 265px; left: 170px;">
-          <input class="input-box" id="ex-jalur-4" placeholder="Ex KA">
-          <span class="arrow">➡</span>
-          <input class="input-box" id="ren-jalur-4" placeholder="Rencana">
-          <button onclick="berangkat('jalur-4-horizontal', 'ex-jalur-4', 'ren-jalur-4')">🚉</button>
-        </div>
-      </div>
-    
-      <script>
-        function berangkat(trackId, exId, renId) {
-          const track = document.getElementById(trackId);
-          if (track) track.classList.remove('occupied');
-          document.getElementById(exId).value = '';
-          document.getElementById(renId).value = '';
-        }
-    
-        document.querySelectorAll('input[id^="ex-jalur-"]').forEach(input => {
-          input.addEventListener('input', () => {
-            const jalurNum = input.id.replace('ex-jalur-', '');
-            let trackId;
-            
-            // Mendapatkan ID track horizontal yang sesuai
-            if (jalurNum === "1") {
-              trackId = "jalur-1";
-            } else {
-              trackId = `jalur-${jalurNum}-horizontal`;
-            }
-            
-            const track = document.getElementById(trackId);
-            if (track) {
-              if (input.value.trim()) {
-                track.classList.add('occupied');
-              } else {
-                track.classList.remove('occupied');
-              }
-            }
-          });
-        });
-      </script>
-    </body>
-    </html>
-  </div>
-
-  <div id="fms" class="tab-content">
-    <!-- Tempelkan kode CY FMS di sini -->
-     
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CY FMS</title>
-  <style>
-    body {
-      background-color: black;
-      font-family: sans-serif;
-      color: white;
-      margin: 0;
-    }
+    /* Common styles for all tabs */
     .yard {
       position: relative;
       width: 1000px;
@@ -436,9 +55,14 @@
       transition: stroke 0.3s;
     }
     .input-pair {
-      position: absolute;
       display: flex;
+      position: absolute;
       align-items: center;
+    }
+    .arrow {
+      color: white;
+      font-size: 14px;
+      margin: 0 4px;
     }
     .input-box {
       width: 80px;
@@ -448,104 +72,424 @@
       color: white;
       text-align: center;
       font-size: 12px;
-      margin: 0 4px;
+    }
+    .input-box::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    .controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0,0,0,0.7);
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    button {
+      background-color: rgba(80,80,80,0.5);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      padding: 5px 10px;
+      margin: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: rgba(100,100,100,0.8);
+    }
+    .status {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      margin-top: 10px;
+      text-align: center;
     }
     .label {
       position: absolute;
-      left: 10px;
+      left: 5px;
       font-size: 12px;
       background-color: rgba(255,255,255,0.1);
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .arrow {
-      color: white;
-      font-size: 14px;
+    .track.permanent {
+      stroke: white !important;
+    }
+    .track.occupied {
+      stroke: red;
+    }
+    /* WBS specific styles */
+    #wbs svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #wbs .label {
+      left: 10px;
+    }
+    #wbs .input-box {
+      width: 70px;
+      margin: 0 2px;
+    }
+    /* Indikator live */
+    .live-indicator {
+      position: fixed;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0,0,0,0.7);
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: red;
+      margin-right: 5px;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
     }
   </style>
 </head>
 <body>
-  <div class="yard">
-    <svg width="1000" height="600">
-      <!-- Jalur 1 -->
-      <polyline id="track-fms-1-serong" points="750,250 700,200" class="track" />
-      <polyline id="track-fms-1-lurus" points="700,200 250,200" class="track" />
-      
-      <!-- Jalur 2 (hanya ke kiri, yang dikontrol oleh kotak input) -->
-      <polyline id="track-fms-2" points="750,250 250,250" class="track" />
-       <polyline points="750,250 900,250" class="track" style="stroke:white; stroke-width:2;" />
-      
-      <!-- Jalur 3 -->
-      <polyline id="track-fms-3-serong" points="750,250 700,300" class="track" />
-      <polyline id="track-fms-3-lurus" points="700,300 250,300" class="track" />
-    </svg>
+  <!-- Indikator LIVE -->
+  <div class="live-indicator">
+    <div class="live-dot"></div>
+    <span>LIVE</span>
+  </div>
 
-    <!-- Labels -->
-    <div class="label" style="top: 190px;">FMS JALUR 1</div>
-    <div class="label" style="top: 240px;">FMS JALUR 2</div>
-    <div class="label" style="top: 290px;">FMS JALUR 3</div>
+  <div class="tabs">
+    <button class="tab-button active" onclick="switchTab('rmk')">CY RMK</button>
+    <button class="tab-button" onclick="switchTab('wbs')">CY WBS</button>
+    <button class="tab-button" onclick="switchTab('fms')">CY FMS</button>
+  </div>
 
-    <!-- Input Pairs -->
-    <div class="input-pair" style="top: 190px; left: 360px;">
-      <input class="input-box" id="fms-box-1" placeholder="Ex KA" />
-      <span class="arrow">➜</span>
-      <input class="input-box" id="fms-plan-1" placeholder="Rencana" />
-      <button onclick="depart('fms-1')">🚉</button>
+  <div id="rmk" class="tab-content active">
+    <div class="yard">
+      <svg width="1000" height="600" style="position: absolute; top: 0; left: 0;">
+        <!-- Jalur tetap -->
+        <polyline id="main-track" points="1000,300 850,300 800,250" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="w1-w3" points="800,250 750,250" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="w1-w2" points="800,250 750,350" stroke="white" stroke-width="3" fill="none" class="track" />
+  
+        <!-- CY 2 Jalur 1 -->
+        <polyline id="track-cy2-1-serong" points="750,250 700,200" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy2-1-lurus" points="700,200 250,200" stroke="white" stroke-width="3" fill="none" class="track" />
+  
+        <!-- CY 2 Jalur 2 -->
+        <polyline id="track-cy2-2" points="750,250 250,250" stroke="white" stroke-width="3" fill="none" class="track" />
+  
+        <!-- CY 2 Jalur 3 -->
+        <polyline id="track-cy2-3-serong" points="750,250 700,300" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy2-3-lurus" points="700,300 250,300" stroke="white" stroke-width="3" fill="none" class="track" />
+  
+        <!-- CY 3A -->
+        <polyline id="track-cy3a" points="750,350 250,350" stroke="white" stroke-width="3" fill="none" class="track" />
+  
+        <!-- CY 3B -->
+        <polyline id="track-cy3b" points="750,350 700,400 250,400" stroke="white" stroke-width="3" fill="none" class="track" />
+      </svg>
+  
+      <!-- Input Pairs -->
+      <div class="input-pair" style="top: 190px; left: 280px;">
+        <input class="input-box" id="box-cy2-1" placeholder="Ex KA" data-id="cy2-1-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="plan-cy2-1" placeholder="Rencana" data-id="cy2-1-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="sf-cy2-1" placeholder="SF" data-id="cy2-1-sf" />
+        <button onclick="clearInputs('cy2-1')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 240px; left: 280px;">
+        <input class="input-box" id="box-cy2-2" placeholder="Ex KA" data-id="cy2-2-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="plan-cy2-2" placeholder="Rencana" data-id="cy2-2-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="sf-cy2-2" placeholder="SF" data-id="cy2-2-sf" />
+        <button onclick="clearInputs('cy2-2')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 290px; left: 280px;">
+        <input class="input-box" id="box-cy2-3" placeholder="Ex KA" data-id="cy2-3-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="plan-cy2-3" placeholder="Rencana" data-id="cy2-3-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="sf-cy2-3" placeholder="SF" data-id="cy2-3-sf" />
+        <button onclick="clearInputs('cy2-3')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 340px; left: 280px;">
+        <input class="input-box" id="box-cy3a" placeholder="Ex KA" data-id="cy3a-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="plan-cy3a" placeholder="Rencana" data-id="cy3a-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="sf-cy3a" placeholder="SF" data-id="cy3a-sf" />
+        <button onclick="clearInputs('cy3a')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 390px; left: 280px;">
+        <input class="input-box" id="box-cy3b" placeholder="Ex KA" data-id="cy3b-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="plan-cy3b" placeholder="Rencana" data-id="cy3b-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="sf-cy3b" placeholder="SF" data-id="cy3b-sf" />
+        <button onclick="clearInputs('cy3b')">🚉</button>
+      </div>
+  
+      <!-- Labels -->
+      <div class="label" style="top: 190px;">CY 2 JALUR 1</div>
+      <div class="label" style="top: 240px;">CY 2 JALUR 2</div>
+      <div class="label" style="top: 290px;">CY 2 JALUR 3</div>
+      <div class="label" style="top: 340px;">CY 3A</div>
+      <div class="label" style="top: 390px;">CY 3B</div>
+  
+      <!-- Controls -->
+      <div class="controls">
+        <button id="reset">Reset Semua</button>
+        <div class="status" id="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
+      </div>
     </div>
-    <div class="input-pair" style="top: 240px; left: 360px;">
-      <input class="input-box" id="fms-box-2" placeholder="Ex KA" />
-      <span class="arrow">➜</span>
-      <input class="input-box" id="fms-plan-2" placeholder="Rencana" />
-      <button onclick="depart('fms-2')">🚉</button>
+  </div>
+
+  <div id="wbs" class="tab-content">
+    <div class="yard">
+      <svg width="1000" height="600">
+        <!-- Jalur 1 (perpanjang ke kiri) -->
+        <polyline id="jalur-1" points="100,100 800,100" class="track" />
+        
+        <!-- Jalur 2 (terpisah antara horizontal dan serong) -->
+        <polyline id="jalur-2-horizontal" points="100,160 540,160" class="track" />
+        <polyline id="jalur-2-diagonal" points="540,160 600,130 650,100" class="track permanent" />
+        
+        <!-- Jalur 3 (terpisah antara horizontal dan serong) -->
+        <polyline id="jalur-3-horizontal" points="100,220 360,220" class="track" />
+        <polyline id="jalur-3-diagonal" points="360,220 420,190 480,160" class="track permanent" />
+        
+        <!-- Jalur 4 (terpisah antara horizontal dan serong) -->
+        <polyline id="jalur-4-horizontal" points="100,280 260,280" class="track" />
+        <path id="jalur-4-diagonal" d="M260,280 Q300,250 360,220" class="track permanent" />
+      </svg>
+  
+      <!-- Labels -->
+      <div class="label" style="top: 90px;">WBS JALUR 1</div>
+      <div class="label" style="top: 150px;">WBS JALUR 2</div>
+      <div class="label" style="top: 210px;">WBS JALUR 3</div>
+      <div class="label" style="top: 270px;">WBS JALUR 4</div>
+  
+      <!-- Kotak Input (ditempatkan di tengah jalur lurus) -->
+      <div class="input-pair" style="top: 85px; left: 150px;">
+        <input class="input-box" id="ex-jalur-1" placeholder="Ex KA" data-id="jalur-1-ex">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="ren-jalur-1" placeholder="Rencana" data-id="jalur-1-ren">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="sf-jalur-1" placeholder="SF" data-id="jalur-1-sf">
+        <button onclick="clearInputs('jalur-1')">🚉</button>
+      </div>
+      
+      <div class="input-pair" style="top: 145px; left: 150px;">
+        <input class="input-box" id="ex-jalur-2" placeholder="Ex KA" data-id="jalur-2-ex">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="ren-jalur-2" placeholder="Rencana" data-id="jalur-2-ren">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="sf-jalur-2" placeholder="SF" data-id="jalur-2-sf">
+        <button onclick="clearInputs('jalur-2')">🚉</button>
+      </div>
+      
+      <div class="input-pair" style="top: 205px; left: 150px;">
+        <input class="input-box" id="ex-jalur-3" placeholder="Ex KA" data-id="jalur-3-ex">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="ren-jalur-3" placeholder="Rencana" data-id="jalur-3-ren">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="sf-jalur-3" placeholder="SF" data-id="jalur-3-sf">
+        <button onclick="clearInputs('jalur-3')">🚉</button>
+      </div>
+      
+      <div class="input-pair" style="top: 265px; left: 150px;">
+        <input class="input-box" id="ex-jalur-4" placeholder="Ex KA" data-id="jalur-4-ex">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="ren-jalur-4" placeholder="Rencana" data-id="jalur-4-ren">
+        <span class="arrow">➡</span>
+        <input class="input-box" id="sf-jalur-4" placeholder="SF" data-id="jalur-4-sf">
+        <button onclick="clearInputs('jalur-4')">🚉</button>
+      </div>
     </div>
-    <div class="input-pair" style="top: 290px; left: 360px;">
-      <input class="input-box" id="fms-box-3" placeholder="Ex KA" />
-      <span class="arrow">➜</span>
-      <input class="input-box" id="fms-plan-3" placeholder="Rencana" />
-      <button onclick="depart('fms-3')">🚉</button>
+  </div>
+
+  <div id="fms" class="tab-content">
+    <div class="yard">
+      <svg width="1000" height="600">
+        <!-- Jalur 1 -->
+        <polyline id="track-fms-1-serong" points="750,250 700,200" class="track" />
+        <polyline id="track-fms-1-lurus" points="700,200 250,200" class="track" />
+        
+        <!-- Jalur 2 (hanya ke kiri, yang dikontrol oleh kotak input) -->
+        <polyline id="track-fms-2" points="750,250 250,250" class="track" />
+        <polyline points="750,250 900,250" class="track" style="stroke:white; stroke-width:3;" />
+        
+        <!-- Jalur 3 -->
+        <polyline id="track-fms-3-serong" points="750,250 700,300" class="track" />
+        <polyline id="track-fms-3-lurus" points="700,300 250,300" class="track" />
+      </svg>
+
+      <!-- Labels -->
+      <div class="label" style="top: 190px;">FMS JALUR 1</div>
+      <div class="label" style="top: 240px;">FMS JALUR 2</div>
+      <div class="label" style="top: 290px;">FMS JALUR 3</div>
+
+      <!-- Input Pairs -->
+      <div class="input-pair" style="top: 190px; left: 280px;">
+        <input class="input-box" id="fms-box-1" placeholder="Ex KA" data-id="fms-1-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-plan-1" placeholder="Rencana" data-id="fms-1-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-sf-1" placeholder="SF" data-id="fms-1-sf" />
+        <button onclick="clearInputs('fms-1')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 240px; left: 280px;">
+        <input class="input-box" id="fms-box-2" placeholder="Ex KA" data-id="fms-2-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-plan-2" placeholder="Rencana" data-id="fms-2-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-sf-2" placeholder="SF" data-id="fms-2-sf" />
+        <button onclick="clearInputs('fms-2')">🚉</button>
+      </div>
+      <div class="input-pair" style="top: 290px; left: 280px;">
+        <input class="input-box" id="fms-box-3" placeholder="Ex KA" data-id="fms-3-ex" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-plan-3" placeholder="Rencana" data-id="fms-3-plan" />
+        <span class="arrow">➜</span>
+        <input class="input-box" id="fms-sf-3" placeholder="SF" data-id="fms-3-sf" />
+        <button onclick="clearInputs('fms-3')">🚉</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const fmsMap = {
+    // ===== FIREBASE KONFIGURASI (GANTI DENGAN MILIK ANDA) =====
+    const firebaseConfig = {
+      apiKey: "GANTI_DENGAN_API_KEY_ANDA",
+      authDomain: "GANTI_DENGAN_AUTH_DOMAIN_ANDA",
+      databaseURL: "https://andisagemoy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "GANTI_DENGAN_PROJECT_ID_ANDA",
+      storageBucket: "GANTI_DENGAN_STORAGE_BUCKET_ANDA",
+      messagingSenderId: "GANTI_DENGAN_MESSAGING_SENDER_ID_ANDA",
+      appId: "GANTI_DENGAN_APP_ID_ANDA"
+    };
+    
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    
+    // ===== KODE SIMPEL UNTUK KOMUNIKASI REALTIME =====
+    
+    // Mapping jalur-jalur untuk update visual
+    const trackMap = {
+      'cy2-1': 'track-cy2-1-lurus',
+      'cy2-2': 'track-cy2-2',
+      'cy2-3': 'track-cy2-3-lurus',
+      'cy3a': 'track-cy3a',
+      'cy3b': 'track-cy3b',
       'fms-1': 'track-fms-1-lurus',
       'fms-2': 'track-fms-2',
       'fms-3': 'track-fms-3-lurus'
     };
-
-    function updateFMS() {
-      Object.keys(fmsMap).forEach(key => {
-        const input = document.getElementById('fms-box-' + key.split('-')[1]);
-        const track = document.getElementById(fmsMap[key]);
-        track.style.stroke = input.value.trim() !== '' ? 'red' : 'white';
+    
+    // 1. SETUP EVENT LISTENERS UNTUK SEMUA INPUT BOX
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tambahkan event listener untuk semua input box
+      document.querySelectorAll('.input-box').forEach(function(input) {
+        input.addEventListener('input', function() {
+          // Simpan ke Firebase setiap kali nilai diubah
+          const dataId = this.getAttribute('data-id');
+          database.ref('data/' + dataId).set(this.value);
+        });
       });
-    }
-
-    function depart(key) {
-      const i = key.split('-')[1];
-      document.getElementById('fms-box-' + i).value = '';
-      document.getElementById('fms-plan-' + i).value = '';
-      document.getElementById(fmsMap[key]).style.stroke = 'white';
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      Object.keys(fmsMap).forEach(key => {
-        document.getElementById('fms-box-' + key.split('-')[1]).addEventListener('input', updateFMS);
+      
+      // Setup tombol reset
+      document.getElementById('reset').addEventListener('click', function() {
+        // Clear semua input pada tab RMK
+        clearInputs('cy2-1');
+        clearInputs('cy2-2');
+        clearInputs('cy2-3');
+        clearInputs('cy3a');
+        clearInputs('cy3b');
       });
-      updateFMS();
+      
+      // 2. LISTEN UNTUK UPDATES DARI FIREBASE
+      // Dengarkan perubahan pada semua data
+      database.ref('data').on('value', function(snapshot) {
+        const data = snapshot.val() || {};
+        
+        // Update semua input box dari data yang diterima
+        for (const [key, value] of Object.entries(data)) {
+          const input = document.querySelector(`[data-id="${key}"]`);
+          if (input && input.value !== value) {
+            input.value = value;
+          }
+          
+          // Update visual jalur jika ini adalah input Ex KA
+          if (key.endsWith('-ex')) {
+            const trackId = key.split('-ex')[0];
+            updateTrackVisual(trackId, value);
+          }
+        }
+      });
     });
-  </script>
-</body>
-</html>
-
-  </div>
-
-  <script>
+    
+    // 3. FUNGSI UNTUK CLEAR INPUT
+    function clearInputs(trackId) {
+      // Clear di interface
+      const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
+      inputs.forEach(input => {
+        input.value = '';
+      });
+      
+      // Clear di Firebase
+      database.ref('data/' + trackId + '-ex').set('');
+      database.ref('data/' + trackId + '-plan').set('');
+      database.ref('data/' + trackId + '-sf').set('');
+      database.ref('data/' + trackId + '-ren').set('');
+    }
+    
+    // 4. FUNGSI UNTUK UPDATE VISUAL TRACK
+    function updateTrackVisual(trackId, value) {
+      // Update untuk RMK dan FMS track
+      if (trackMap[trackId]) {
+        const trackElement = document.getElementById(trackMap[trackId]);
+        if (trackElement) {
+          trackElement.style.stroke = value ? 'red' : 'white';
+        }
+      } 
+      // Update untuk WBS track
+      else if (trackId.startsWith('jalur-')) {
+        const trackElement = document.getElementById(trackId === "jalur-1" ? trackId : `${trackId}-horizontal`);
+        if (trackElement) {
+          if (value) {
+            trackElement.classList.add('occupied');
+            trackElement.style.stroke = 'red';
+          } else {
+            trackElement.classList.remove('occupied');
+            trackElement.style.stroke = 'white';
+          }
+        }
+      }
+    }
+    
+    // 5. FUNGSI SWITCH TAB
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
+      
+      // Get the button associated with this tab and make it active
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(tabId)) {
+          btn.classList.add('active');
+        }
+      });
     }
   </script>
 </body>
