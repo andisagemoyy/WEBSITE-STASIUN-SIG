@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Simpang | Real-time KA Monitoring</title>
   <link rel="shortcut icon" href="assets/logo (2).png" type="image/x-icon">
-  <!-- Firebase SDK - HANYA BUTUH INI -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
@@ -155,9 +155,171 @@
       50% { opacity: 1; }
       100% { opacity: 0.3; }
     }
+    
+    /* Login Styles */
+    .login-container {
+      position: fixed;
+      top: 5px;
+      left: 5px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+    
+    .login-btn {
+      background-color: rgba(0,0,0,0.7);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      padding: 5px 15px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .login-btn:hover {
+      background-color: rgba(50,50,50,0.8);
+    }
+    
+    .login-icon {
+      margin-right: 5px;
+      font-size: 16px;
+    }
+    
+    .user-status {
+      background-color: rgba(0,0,0,0.7);
+      color: rgba(255,255,255,0.8);
+      border-radius: 4px;
+      padding: 5px 15px;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+    
+    .editor-status {
+      color: #4CAF50;
+      font-weight: bold;
+    }
+    
+    .viewer-status {
+      color: #FFC107;
+    }
+    
+    /* Login Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 5px;
+      width: 300px;
+      border: 1px solid #333;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    .close-btn:hover {
+      color: white;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      background-color: #333;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: white;
+    }
+    
+    .login-form input:focus {
+      outline: none;
+      border-color: #666;
+    }
+    
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .login-form button:hover {
+      background-color: #555;
+    }
+    
+    .login-error {
+      color: #f44336;
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+    
+    /* For read-only mode */
+    .read-only {
+      pointer-events: none;
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
+  <!-- Login Container -->
+  <div class="login-container">
+    <button class="login-btn" id="loginToggleBtn">
+      <span class="login-icon">👤</span> Log In
+    </button>
+    <div class="user-status">
+      <span class="viewer-status">Mode: Viewer</span>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Login dulu ya</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="login-form">
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="loginBtn">Login</button>
+        <p class="login-error" id="loginError">Username atau password salah!</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Indikator LIVE -->
   <div class="live-indicator">
     <div class="live-dot"></div>
@@ -197,7 +359,7 @@
       </svg>
   
       <!-- Input Pairs -->
-      <div class="input-pair" style="top: 190px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 190px; left: 280px;">
         <input class="input-box" id="box-cy2-1" placeholder="Ex KA" data-id="cy2-1-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-1" placeholder="Rencana" data-id="cy2-1-plan" />
@@ -205,7 +367,7 @@
         <input class="input-box" id="sf-cy2-1" placeholder="SF" data-id="cy2-1-sf" />
         <button onclick="clearInputs('cy2-1')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 240px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 240px; left: 280px;">
         <input class="input-box" id="box-cy2-2" placeholder="Ex KA" data-id="cy2-2-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-2" placeholder="Rencana" data-id="cy2-2-plan" />
@@ -213,7 +375,7 @@
         <input class="input-box" id="sf-cy2-2" placeholder="SF" data-id="cy2-2-sf" />
         <button onclick="clearInputs('cy2-2')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 290px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 290px; left: 280px;">
         <input class="input-box" id="box-cy2-3" placeholder="Ex KA" data-id="cy2-3-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-3" placeholder="Rencana" data-id="cy2-3-plan" />
@@ -221,7 +383,7 @@
         <input class="input-box" id="sf-cy2-3" placeholder="SF" data-id="cy2-3-sf" />
         <button onclick="clearInputs('cy2-3')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 340px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 340px; left: 280px;">
         <input class="input-box" id="box-cy3a" placeholder="Ex KA" data-id="cy3a-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy3a" placeholder="Rencana" data-id="cy3a-plan" />
@@ -229,7 +391,7 @@
         <input class="input-box" id="sf-cy3a" placeholder="SF" data-id="cy3a-sf" />
         <button onclick="clearInputs('cy3a')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 390px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 390px; left: 280px;">
         <input class="input-box" id="box-cy3b" placeholder="Ex KA" data-id="cy3b-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy3b" placeholder="Rencana" data-id="cy3b-plan" />
@@ -246,7 +408,7 @@
       <div class="label" style="top: 390px;">CY 3B</div>
   
       <!-- Controls -->
-      <div class="controls">
+      <div class="controls editor-only">
         <button id="reset">Reset Semua</button>
         <div class="status" id="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
       </div>
@@ -279,7 +441,7 @@
       <div class="label" style="top: 270px;">WBS JALUR 4</div>
   
       <!-- Kotak Input (ditempatkan di tengah jalur lurus) -->
-      <div class="input-pair" style="top: 85px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 85px; left: 150px;">
         <input class="input-box" id="ex-jalur-1" placeholder="Ex KA" data-id="jalur-1-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-1" placeholder="Rencana" data-id="jalur-1-ren">
@@ -288,7 +450,7 @@
         <button onclick="clearInputs('jalur-1')">🚉</button>
       </div>
       
-      <div class="input-pair" style="top: 145px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 145px; left: 150px;">
         <input class="input-box" id="ex-jalur-2" placeholder="Ex KA" data-id="jalur-2-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-2" placeholder="Rencana" data-id="jalur-2-ren">
@@ -297,7 +459,7 @@
         <button onclick="clearInputs('jalur-2')">🚉</button>
       </div>
       
-      <div class="input-pair" style="top: 205px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 205px; left: 150px;">
         <input class="input-box" id="ex-jalur-3" placeholder="Ex KA" data-id="jalur-3-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-3" placeholder="Rencana" data-id="jalur-3-ren">
@@ -306,7 +468,7 @@
         <button onclick="clearInputs('jalur-3')">🚉</button>
       </div>
       
-      <div class="input-pair" style="top: 265px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 265px; left: 150px;">
         <input class="input-box" id="ex-jalur-4" placeholder="Ex KA" data-id="jalur-4-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-4" placeholder="Rencana" data-id="jalur-4-ren">
@@ -339,7 +501,7 @@
       <div class="label" style="top: 290px;">FMS JALUR 3</div>
 
       <!-- Input Pairs -->
-      <div class="input-pair" style="top: 190px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 190px; left: 280px;">
         <input class="input-box" id="fms-box-1" placeholder="Ex KA" data-id="fms-1-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-1" placeholder="Rencana" data-id="fms-1-plan" />
@@ -347,7 +509,7 @@
         <input class="input-box" id="fms-sf-1" placeholder="SF" data-id="fms-1-sf" />
         <button onclick="clearInputs('fms-1')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 240px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 240px; left: 280px;">
         <input class="input-box" id="fms-box-2" placeholder="Ex KA" data-id="fms-2-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-2" placeholder="Rencana" data-id="fms-2-plan" />
@@ -355,7 +517,7 @@
         <input class="input-box" id="fms-sf-2" placeholder="SF" data-id="fms-2-sf" />
         <button onclick="clearInputs('fms-2')">🚉</button>
       </div>
-      <div class="input-pair" style="top: 290px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 290px; left: 280px;">
         <input class="input-box" id="fms-box-3" placeholder="Ex KA" data-id="fms-3-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-3" placeholder="Rencana" data-id="fms-3-plan" />
@@ -367,25 +529,28 @@
   </div>
 
   <script>
-    // ===== FIREBASE KONFIGURASI (GANTI DENGAN MILIK ANDA) =====
+    // ===== FIREBASE KONFIGURASI =====
     const firebaseConfig = {
-  apiKey: "AIzaSyC6gE0Uqh6PisJWIeiiBrjYYiXKVliw1lg",
-  authDomain: "andisagemoy.firebaseapp.com",
-  databaseURL: "https://andisagemoy-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "andisagemoy",
-  storageBucket: "andisagemoy.firebasestorage.app",
-  messagingSenderId: "977705794727",
-  appId: "1:977705794727:web:2e0111ad3374ccae3f6f82",
-  measurementId: "G-K7C06YSQ11"
-};
+      apiKey: "AIzaSyC6gE0Uqh6PisJWIeiiBrjYYiXKVliw1lg",
+      authDomain: "andisagemoy.firebaseapp.com",
+      databaseURL: "https://andisagemoy-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "andisagemoy",
+      storageBucket: "andisagemoy.firebasestorage.app",
+      messagingSenderId: "977705794727",
+      appId: "1:977705794727:web:2e0111ad3374ccae3f6f82",
+      measurementId: "G-K7C06YSQ11"
+    };
     
     // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     
-    // ===== KODE SIMPEL UNTUK KOMUNIKASI REALTIME =====
+    // ===== LOGIN VARIABLES =====
+    const CORRECT_USERNAME = "PAP";
+    const CORRECT_PASSWORD = "ADMIN";
+    let isLoggedIn = false;
     
-    // Mapping jalur-jalur untuk update visual
+    // ===== Mapping jalur-jalur untuk update visual =====
     const trackMap = {
       'cy2-1': 'track-cy2-1-lurus',
       'cy2-2': 'track-cy2-2',
@@ -397,8 +562,85 @@
       'fms-3': 'track-fms-3-lurus'
     };
     
-    // 1. SETUP EVENT LISTENERS UNTUK SEMUA INPUT BOX
+    // ===== DOM ELEMENTS =====
+    let loginBtn;
+    let loginModal;
+    let closeBtn;
+    let loginForm;
+    let loginError;
+    let userStatus;
+    let editorOnlyElements;
+    
+    // ===== SETUP EVENT LISTENERS =====
     document.addEventListener('DOMContentLoaded', function() {
+      // Setup login elements
+      loginBtn = document.getElementById('loginToggleBtn');
+      loginModal = document.getElementById('loginModal');
+      closeBtn = document.querySelector('.close-btn');
+      loginForm = document.getElementById('loginBtn');
+      loginError = document.getElementById('loginError');
+      userStatus = document.querySelector('.user-status span');
+      
+      // Get all editor-only elements
+      editorOnlyElements = document.querySelectorAll('.editor-only');
+      
+      // Initially disable all editor-only elements
+      setEditorMode(false);
+      
+      // Setup login button
+      loginBtn.addEventListener('click', function() {
+        loginModal.style.display = 'flex';
+      });
+      
+      // Setup close button
+      closeBtn.addEventListener('click', function() {
+        loginModal.style.display = 'none';
+      });
+      
+      // Setup login form submission
+      loginForm.addEventListener('click', function() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+          // Login successful
+          isLoggedIn = true;
+          loginModal.style.display = 'none';
+          userStatus.textContent = 'Mode: Editor';
+          userStatus.className = 'editor-status';
+          loginBtn.innerHTML = '<span class="login-icon">🔒</span> Log Out';
+          setEditorMode(true);
+        } else {
+          // Login failed
+          loginError.style.display = 'block';
+          setTimeout(() => {
+            loginError.style.display = 'none';
+          }, 3000);
+        }
+      });
+      
+      // Toggle login/logout
+      loginBtn.addEventListener('click', function() {
+        if (isLoggedIn) {
+          // Log out
+          isLoggedIn = false;
+          userStatus.textContent = 'Mode: Viewer';
+          userStatus.className = 'viewer-status';
+          loginBtn.innerHTML = '<span class="login-icon">👤</span> Log In';
+          setEditorMode(false);
+        } else {
+          // Show login modal
+          loginModal.style.display = 'flex';
+        }
+      });
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', function(event) {
+        if (event.target === loginModal) {
+          loginModal.style.display = 'none';
+        }
+      });
+      
       // Tambahkan event listener untuk semua input box
       document.querySelectorAll('.input-box').forEach(function(input) {
         input.addEventListener('input', function() {
@@ -418,8 +660,7 @@
         clearInputs('cy3b');
       });
       
-      // 2. LISTEN UNTUK UPDATES DARI FIREBASE
-      // Dengarkan perubahan pada semua data
+      // Listen untuk updates dari Firebase
       database.ref('data').on('value', function(snapshot) {
         const data = snapshot.val() || {};
         
@@ -439,8 +680,37 @@
       });
     });
     
-    // 3. FUNGSI UNTUK CLEAR INPUT
+    // ===== HELPER FUNCTIONS =====
+    
+    // Set editor mode
+    function setEditorMode(isEditor) {
+      // Toggle editor-only elements
+      editorOnlyElements.forEach(element => {
+        if (isEditor) {
+          element.classList.remove('read-only');
+        } else {
+          element.classList.add('read-only');
+        }
+      });
+      
+      // Toggle input elements
+      const inputElements = document.querySelectorAll('.input-box');
+      inputElements.forEach(input => {
+        input.disabled = !isEditor;
+      });
+      
+      // Toggle buttons
+      const buttonElements = document.querySelectorAll('.editor-only button');
+      buttonElements.forEach(button => {
+        button.disabled = !isEditor;
+      });
+    }
+    
+    // Clear inputs
     function clearInputs(trackId) {
+      // Check if logged in
+      if (!isLoggedIn) return;
+      
       // Clear di interface
       const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
       inputs.forEach(input => {
@@ -454,7 +724,7 @@
       database.ref('data/' + trackId + '-ren').set('');
     }
     
-    // 4. FUNGSI UNTUK UPDATE VISUAL TRACK
+    // Update visual track
     function updateTrackVisual(trackId, value) {
       // Update untuk RMK dan FMS track
       if (trackMap[trackId]) {
@@ -478,7 +748,7 @@
       }
     }
     
-    // 5. FUNGSI SWITCH TAB
+    // Switch tab
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
