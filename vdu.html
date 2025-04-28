@@ -65,31 +65,23 @@
       position: absolute;
       align-items: center;
     }
-    
     .arrow {
       color: white;
-      font-size: 16px;
+      font-size: 16px; /* Increased size */
       margin: 0 6px;
     }
-
     .input-box {
-      width: 120px;
-      height: 30px;
-      background: rgba(255,255,255,0.1);
+      width: 100px; /* Increased width */
+      height: 25px; /* Increased height */
+      background: transparent;
       border: 2px solid white;
       color: white;
       text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      text-shadow: 0 0 5px #ffffff;
-      border-radius: 6px;
-      backdrop-filter: blur(3px);
+      font-size: 14px; /* Increased font */
     }
-
     .input-box::placeholder {
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.4);
     }
-
     .controls {
       position: absolute;
       top: 10px;
@@ -321,43 +313,6 @@
       left: 50%;
       transform: translateX(-50%);
     }
-    
-    /* Connection status indicator */
-    .connection-status {
-      position: fixed;
-      top: 10px;
-      right: 100px;
-      background-color: rgba(0,0,0,0.7);
-      padding: 8px 15px;
-      border-radius: 5px;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-    }
-    .connection-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-    .connection-dot.online {
-      background-color: #4CAF50;
-    }
-    .connection-dot.offline {
-      background-color: #f44336;
-    }
-    .last-update {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background-color: rgba(0,0,0,0.7);
-      padding: 8px 15px;
-      border-radius: 5px;
-      z-index: 1000;
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-    }
   </style>
 </head>
 <body>
@@ -391,17 +346,6 @@
   <div class="live-indicator">
     <div class="live-dot"></div>
     <span>LIVE</span>
-  </div>
-  
-  <!-- Connection Status -->
-  <div class="connection-status">
-    <div class="connection-dot offline" id="connection-dot"></div>
-    <span id="connection-text">Offline</span>
-  </div>
-  
-  <!-- Last update time -->
-  <div class="last-update" id="last-update">
-    Last update: -
   </div>
 
   <div class="tabs">
@@ -631,557 +575,372 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
+</script>
 
-// Define database reference
-const tracksRef = database.ref('tracks');
-const connectionRef = database.ref('.info/connected');
-
-// ===== VARIABEL LOGIN =====
-const CORRECT_USERNAME = "ADMIN";
-const CORRECT_PASSWORD = "ADMIN";
-let isLoggedIn = false;
-
-// ===== Mapping jalur-jalur untuk update visual =====
-const trackMap = {
-  'cy2-1': 'track-cy2-1-lurus',
-  'cy2-2': 'track-cy2-2',
-  'cy2-3': 'track-cy2-3-lurus',
-  'cy3a': 'track-cy3a',
-  'cy3b': 'track-cy3b',
-  'fms-1': 'track-fms-1-lurus',
-  'fms-2': 'track-fms-2',
-  'fms-3': 'track-fms-3-lurus',
-  'jalur-1': 'jalur-1',
-  'jalur-2': 'jalur-2-horizontal',
-  'jalur-3': 'jalur-3-horizontal',
-  'jalur-4': 'jalur-4-horizontal'
-};
-
-// ===== DOM ELEMENTS =====
-let loginBtn;
-let loginModal;
-let closeBtn;
-let loginForm;
-let loginError;
-let userStatus;
-let editorOnlyElements;
-let connectionDot;
-let connectionText;
-let lastUpdateElement;
-
-// Store scroll positions for each tab
-const scrollPositions = {
-  'rmk': 0,
-  'wbs': 0,
-  'fms': 0
-};
-
-// Function to format current time
-function getCurrentTimeFormatted() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  return `${hours}:${minutes}:${seconds}`;
-}
-
-// Function to center tab content on specific y-coordinate
-function centerTabContent(tabId, yPosition) {
-  const tabContent = document.getElementById(tabId);
-  if (tabContent) {
-    const yard = tabContent.querySelector('.yard');
-    if (yard) {
-      // Calculate the vertical scroll position to center the target y-coordinate
-      const windowHeight = window.innerHeight;
-      const tabsHeight = document.querySelector('.tabs').offsetHeight;
-      const scrollTop = yPosition - (windowHeight - tabsHeight) / 2;
-      
-      // Apply the scroll position (only if not previously scrolled by user)
-      if (scrollPositions[tabId] === 0) {
-        yard.scrollTop = Math.max(0, scrollTop);
-        scrollPositions[tabId] = yard.scrollTop;
-        console.log(`Centered ${tabId} at y=${yPosition}px`);
-      } else {
-        // Restore previous scroll position
-        yard.scrollTop = scrollPositions[tabId];
-        console.log(`Restored ${tabId} scroll to ${scrollPositions[tabId]}px`);
+<script>
+    // ===== VARIABEL LOGIN =====
+    const CORRECT_USERNAME = "PAP";
+    const CORRECT_PASSWORD = "ADMIN";
+    let isLoggedIn = false;
+    
+    // ===== Mapping jalur-jalur untuk update visual =====
+    const trackMap = {
+      'cy2-1': 'track-cy2-1-lurus',
+      'cy2-2': 'track-cy2-2',
+      'cy2-3': 'track-cy2-3-lurus',
+      'cy3a': 'track-cy3a',
+      'cy3b': 'track-cy3b',
+      'fms-1': 'track-fms-1-lurus',
+      'fms-2': 'track-fms-2',
+      'fms-3': 'track-fms-3-lurus',
+      'jalur-1': 'jalur-1',
+      'jalur-2': 'jalur-2-horizontal',
+      'jalur-3': 'jalur-3-horizontal',
+      'jalur-4': 'jalur-4-horizontal'
+    };
+    
+    // ===== DOM ELEMENTS =====
+    let loginBtn;
+    let loginModal;
+    let closeBtn;
+    let loginForm;
+    let loginError;
+    let userStatus;
+    let editorOnlyElements;
+    
+    // Store scroll positions for each tab
+    const scrollPositions = {
+      'rmk': 0,
+      'wbs': 0,
+      'fms': 0
+    };
+    
+    // Function to center tab content on specific y-coordinate
+    function centerTabContent(tabId, yPosition) {
+      const tabContent = document.getElementById(tabId);
+      if (tabContent) {
+        const yard = tabContent.querySelector('.yard');
+        if (yard) {
+          // Calculate the vertical scroll position to center the target y-coordinate
+          const windowHeight = window.innerHeight;
+          const tabsHeight = document.querySelector('.tabs').offsetHeight;
+          const scrollTop = yPosition - (windowHeight - tabsHeight) / 2;
+          
+          // Apply the scroll position (only if not previously scrolled by user)
+          if (scrollPositions[tabId] === 0) {
+            yard.scrollTop = Math.max(0, scrollTop);
+            scrollPositions[tabId] = yard.scrollTop;
+            console.log(`Centered ${tabId} at y=${yPosition}px`);
+          } else {
+            // Restore previous scroll position
+            yard.scrollTop = scrollPositions[tabId];
+            console.log(`Restored ${tabId} scroll to ${scrollPositions[tabId]}px`);
+          }
+        }
       }
     }
-  }
-}
-
-// Function to save scroll position
-function saveScrollPosition(tabId) {
-  const tabContent = document.getElementById(tabId);
-  if (tabContent) {
-    const yard = tabContent.querySelector('.yard');
-    if (yard) {
-      scrollPositions[tabId] = yard.scrollTop;
-      console.log(`Saved ${tabId} scroll position: ${yard.scrollTop}px`);
-    }
-  }
-}
-
-// Function to switch tab and handle scroll positions
-function switchTab(tabId) {
-  console.log("Tab function called with:", tabId);
-  
-  // Save current tab's scroll position before switching
-  document.querySelectorAll('.tab-content.active').forEach(el => {
-    saveScrollPosition(el.id);
-  });
-  
-  // Hide all tab contents
-  document.querySelectorAll('.tab-content').forEach(el => {
-    el.classList.remove('active');
-    console.log("Removed active from:", el.id);
-  });
-  
-  // Remove active class from all buttons
-  document.querySelectorAll('.tab-button').forEach(el => {
-    el.classList.remove('active');
-  });
-  
-  // Show selected tab
-  const tabToShow = document.getElementById(tabId);
-  if (tabToShow) {
-    tabToShow.classList.add('active');
-    console.log("Activated tab:", tabId);
     
-    // Center the tab content or restore previous scroll position
-    centerTabContent(tabId, tabId === 'rmk' ? 390 : (tabId === 'wbs' ? 250 : 330));
-  } else {
-    console.error("Tab not found:", tabId);
-  }
-  
-  // Activate corresponding button
-  document.querySelectorAll('.tab-button').forEach(btn => {
-    if (btn.textContent.toUpperCase().includes(tabId.toUpperCase())) {
-      btn.classList.add('active');
-      console.log("Activated button:", btn.textContent);
+    // Function to save scroll position
+    function saveScrollPosition(tabId) {
+      const tabContent = document.getElementById(tabId);
+      if (tabContent) {
+        const yard = tabContent.querySelector('.yard');
+        if (yard) {
+          scrollPositions[tabId] = yard.scrollTop;
+          console.log(`Saved ${tabId} scroll position: ${yard.scrollTop}px`);
+        }
+      }
     }
-  });
-}
-
-// Update track color when input changes
-function updateTrackColor(input) {
-  const dataId = input.getAttribute('data-id');
-  if (!dataId) {
-    console.error("No data-id attribute on input:", input.id);
-    return;
-  }
-  
-  const trackIdParts = dataId.split('-');
-  let trackId;
-  
-  if (trackIdParts.length >= 2) {
-    if (trackIdParts[1] === 'ex') {
-      // Handle format like "jalur-1-ex"
-      trackId = trackIdParts[0] + '-' + trackIdParts[1].split('ex')[0];
-    } else {
-      // Handle format like "cy2-1-ex"
-      trackId = trackIdParts[0] + '-' + trackIdParts[1];
+    
+    // Function to switch tab and handle scroll positions
+    function switchTab(tabId) {
+      console.log("Tab function called with:", tabId);
+      
+      // Save current tab's scroll position before switching
+      document.querySelectorAll('.tab-content.active').forEach(el => {
+        saveScrollPosition(el.id);
+      });
+      
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+        console.log("Removed active from:", el.id);
+      });
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.tab-button').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Show selected tab
+      const tabToShow = document.getElementById(tabId);
+      if (tabToShow) {
+        tabToShow.classList.add('active');
+        console.log("Activated tab:", tabId);
+        
+        // Center the tab content or restore previous scroll position
+        centerTabContent(tabId, tabId === 'rmk' ? 390 : (tabId === 'wbs' ? 250 : 330));
+      } else {
+        console.error("Tab not found:", tabId);
+      }
+      
+      // Activate corresponding button
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        if (btn.textContent.toUpperCase().includes(tabId.toUpperCase())) {
+          btn.classList.add('active');
+          console.log("Activated button:", btn.textContent);
+        }
+      });
     }
-  } else {
-    console.error("Invalid data-id format:", dataId);
-    return;
-  }
-  
-  const value = input.value.trim();
-  console.log("Updating track:", trackId, "Value:", value, "TrackMap entry:", trackMap[trackId]);
-  
-  updateTrackVisual(trackId, value);
-  
-  // Update in Firebase if logged in
-  if (isLoggedIn) {
-    updateTrackData(trackId);
-  }
-}
-
-// Function to update track data in Firebase
-function updateTrackData(trackId) {
-  if (!isLoggedIn) return;
-  
-  // Get all input values for this track
-  let trackData = {};
-  
-  // Find all inputs related to this track
-  document.querySelectorAll(`[data-id^="${trackId}-"]`).forEach(input => {
-    const dataId = input.getAttribute('data-id');
-    const fieldType = dataId.split('-').pop(); // ex, plan/ren, sf
-    trackData[fieldType] = input.value.trim();
-  });
-  
-  // Add timestamp
-  trackData.lastUpdate = firebase.database.ServerValue.TIMESTAMP;
-  trackData.updatedBy = "Editor"; // Could be the username in the future
-  
-  // Update in Firebase
-  tracksRef.child(trackId).set(trackData)
-    .then(() => {
-      console.log(`Track ${trackId} data updated in Firebase`);
-      updateLastUpdateTime();
-    })
-    .catch(error => {
-      console.error(`Error updating track ${trackId} data:`, error);
-    });
-}
-
-// Function to update the last update time display
-function updateLastUpdateTime() {
-  if (lastUpdateElement) {
-    lastUpdateElement.textContent = `Last update: ${getCurrentTimeFormatted()}`;
-  }
-}
-
-// ===== SETUP EVENT LISTENERS =====
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("DOM fully loaded");
-  
-  // Setup login elements
-  loginBtn = document.getElementById('loginToggleBtn');
-  loginModal = document.getElementById('loginModal');
-  closeBtn = document.querySelector('.close-btn');
-  loginForm = document.getElementById('loginBtn');
-  loginError = document.getElementById('loginError');
-  userStatus = document.querySelector('.user-status span');
-  connectionDot = document.getElementById('connection-dot');
-  connectionText = document.getElementById('connection-text');
-  lastUpdateElement = document.getElementById('last-update');
-  
-  // Get all editor-only elements
-  editorOnlyElements = document.querySelectorAll('.editor-only');
-  
-  // Initially disable all editor-only elements
-  setEditorMode(false);
-  
-  // Center each tab content on its middle track only for first load
-  centerTabContent('rmk', 390); // CY2 Jalur 3 (390px)
-  
-  // Setup scroll position saving for all yard containers
-  document.querySelectorAll('.yard').forEach(yard => {
-    yard.addEventListener('scroll', function() {
-      const tabId = this.closest('.tab-content').id;
-      scrollPositions[tabId] = this.scrollTop;
-      console.log(`Updated ${tabId} scroll position to ${this.scrollTop}px`);
-    });
-  });
-  
-  // Setup login button
-  loginBtn.addEventListener('click', function() {
-    if (!isLoggedIn) {
-      loginModal.style.display = 'flex';
-    } else {
-      // Log out
-      isLoggedIn = false;
-      userStatus.textContent = 'Mode: Viewer';
-      userStatus.className = 'viewer-status';
-      loginBtn.innerHTML = '<span class="login-icon">👤</span> Log In';
+    
+    // Update track color when input changes
+    function updateTrackColor(input) {
+      const dataId = input.getAttribute('data-id');
+      if (!dataId) {
+        console.error("No data-id attribute on input:", input.id);
+        return;
+      }
+      
+      const trackIdParts = dataId.split('-');
+      let trackId;
+      
+      if (trackIdParts.length >= 2) {
+        if (trackIdParts[1] === 'ex') {
+          // Handle format like "jalur-1-ex"
+          trackId = trackIdParts[0] + '-' + trackIdParts[1].split('ex')[0];
+        } else {
+          // Handle format like "cy2-1-ex"
+          trackId = trackIdParts[0] + '-' + trackIdParts[1];
+        }
+      } else {
+        console.error("Invalid data-id format:", dataId);
+        return;
+      }
+      
+      const value = input.value.trim();
+      console.log("Updating track:", trackId, "Value:", value, "TrackMap entry:", trackMap[trackId]);
+      
+      updateTrackVisual(trackId, value);
+    }
+    
+    // ===== SETUP EVENT LISTENERS =====
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM fully loaded");
+      
+      // Setup login elements
+      loginBtn = document.getElementById('loginToggleBtn');
+      loginModal = document.getElementById('loginModal');
+      closeBtn = document.querySelector('.close-btn');
+      loginForm = document.getElementById('loginBtn');
+      loginError = document.getElementById('loginError');
+      userStatus = document.querySelector('.user-status span');
+      
+      // Get all editor-only elements
+      editorOnlyElements = document.querySelectorAll('.editor-only');
+      
+      // Initially disable all editor-only elements
       setEditorMode(false);
-    }
-  });
-  
-  // Setup close button
-  closeBtn.addEventListener('click', function() {
-    loginModal.style.display = 'none';
-  });
-  
-  // Setup login form submission
-  loginForm.addEventListener('click', function() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+      
+      // Center each tab content on its middle track only for first load
+      centerTabContent('rmk', 390); // CY2 Jalur 3 (390px)
+      
+      // Setup scroll position saving for all yard containers
+      document.querySelectorAll('.yard').forEach(yard => {
+        yard.addEventListener('scroll', function() {
+          const tabId = this.closest('.tab-content').id;
+          scrollPositions[tabId] = this.scrollTop;
+          console.log(`Updated ${tabId} scroll position to ${this.scrollTop}px`);
+        });
+      });
+      
+      // Setup login button
+      loginBtn.addEventListener('click', function() {
+        if (!isLoggedIn) {
+          loginModal.style.display = 'flex';
+        } else {
+          // Log out
+          isLoggedIn = false;
+          userStatus.textContent = 'Mode: Viewer';
+          userStatus.className = 'viewer-status';
+          loginBtn.innerHTML = '<span class="login-icon">👤</span> Log In';
+          setEditorMode(false);
+        }
+      });
+      
+      // Setup close button
+      closeBtn.addEventListener('click', function() {
+        loginModal.style.display = 'none';
+      });
+      
+      // Setup login form submission
+      loginForm.addEventListener('click', function() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+          // Login successful
+          isLoggedIn = true;
+          loginModal.style.display = 'none';
+          userStatus.textContent = 'Mode: Editor';
+          userStatus.className = 'editor-status';
+          loginBtn.innerHTML = '<span class="login-icon">🔒</span> Log Out';
+          setEditorMode(true);
+        } else {
+          // Login failed
+          loginError.style.display = 'block';
+          setTimeout(() => {
+            loginError.style.display = 'none';
+          }, 3000);
+        }
+      });
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', function(event) {
+        if (event.target === loginModal) {
+          loginModal.style.display = 'none';
+        }
+      });
+      
+      // Setup reset button
+      const resetButton = document.getElementById('reset');
+      if (resetButton) {
+        resetButton.addEventListener('click', function() {
+          if (!isLoggedIn) {
+            alert("Anda perlu login sebagai Editor untuk melakukan ini");
+            return;
+          }
+          
+          // Clear all inputs on all tabs
+          clearInputs('cy2-1');
+          clearInputs('cy2-2');
+          clearInputs('cy2-3');
+          clearInputs('cy3a');
+          clearInputs('cy3b');
+          clearInputs('fms-1');
+          clearInputs('fms-2');
+          clearInputs('fms-3');
+          clearInputs('jalur-1');
+          clearInputs('jalur-2');
+          clearInputs('jalur-3');
+          clearInputs('jalur-4');
+          
+          // Show reset confirmation
+          const statusElement = document.getElementById('status');
+          if (statusElement) {
+            statusElement.textContent = "Semua jalur telah direset!";
+            setTimeout(() => {
+              statusElement.textContent = "Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.";
+            }, 3000);
+          }
+        });
+      }
+      
+      // Add input event listeners to all Ex KA input boxes
+      const exKaInputs = document.querySelectorAll('input[id^="box-"], input[id^="ex-"], input[id^="fms-box-"]');
+      console.log("Found Ex KA inputs:", exKaInputs.length);
+      
+      exKaInputs.forEach(input => {
+        console.log("Setting up listener for:", input.id);
+        input.addEventListener('input', function() {
+          updateTrackColor(this);
+        });
+      });
+      
+      // Add direct click listeners to departure buttons
+      const departureButtons = document.querySelectorAll('button[onclick^="clearInputs"]');
+      departureButtons.forEach(button => {
+        const originalOnclick = button.getAttribute('onclick');
+        button.removeAttribute('onclick');
+        
+        button.addEventListener('click', function() {
+          if (!isLoggedIn) {
+            alert("Anda perlu login sebagai Editor untuk melakukan ini");
+            return;
+          }
+          
+          const trackId = originalOnclick.match(/'([^']+)'/)[1];
+          clearInputs(trackId);
+        });
+      });
+      
+      // Clean all tracks initially
+      Object.keys(trackMap).forEach(trackId => {
+        updateTrackVisual(trackId, '');
+      });
+    });
     
-    if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
-      // Login successful
-      isLoggedIn = true;
-      loginModal.style.display = 'none';
-      userStatus.textContent = 'Mode: Editor';
-      userStatus.className = 'editor-status';
-      loginBtn.innerHTML = '<span class="login-icon">🔒</span> Log Out';
-      setEditorMode(true);
-    } else {
-      // Login failed
-      loginError.style.display = 'block';
-      setTimeout(() => {
-        loginError.style.display = 'none';
-      }, 3000);
+    // ===== HELPER FUNCTIONS =====
+    
+    // Set editor mode
+    function setEditorMode(isEditor) {
+      // Toggle editor-only elements
+      editorOnlyElements.forEach(element => {
+        if (isEditor) {
+          element.classList.remove('read-only');
+        } else {
+          element.classList.add('read-only');
+        }
+      });
+      
+      // Toggle input elements
+      const inputElements = document.querySelectorAll('.input-box');
+      inputElements.forEach(input => {
+        input.disabled = !isEditor;
+      });
+      
+      // Toggle buttons
+      const buttonElements = document.querySelectorAll('.editor-only button');
+      buttonElements.forEach(button => {
+        button.disabled = !isEditor;
+      });
     }
-  });
-  
-  // Close modal when clicking outside
-  window.addEventListener('click', function(event) {
-    if (event.target === loginModal) {
-      loginModal.style.display = 'none';
-    }
-  });
-  
-  // Setup reset button
-  const resetButton = document.getElementById('reset');
-  if (resetButton) {
-    resetButton.addEventListener('click', function() {
+    
+    // Clear inputs
+    function clearInputs(trackId) {
+      console.log("Clearing inputs for track:", trackId);
+      
+      // Check if logged in
       if (!isLoggedIn) {
         alert("Anda perlu login sebagai Editor untuk melakukan ini");
         return;
       }
       
-      // Confirm reset
-      if (!confirm("Apakah Anda yakin ingin mereset semua jalur?")) {
-        return;
-      }
+      // Clear in interface
+      const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
+      console.log("Found inputs to clear:", inputs.length);
       
-      // Clear all inputs on all tabs
-      clearInputs('cy2-1');
-      clearInputs('cy2-2');
-      clearInputs('cy2-3');
-      clearInputs('cy3a');
-      clearInputs('cy3b');
-      clearInputs('fms-1');
-      clearInputs('fms-2');
-      clearInputs('fms-3');
-      clearInputs('jalur-1');
-      clearInputs('jalur-2');
-      clearInputs('jalur-3');
-      clearInputs('jalur-4');
+      inputs.forEach(input => {
+        input.value = '';
+      });
       
-      // Reset all data in Firebase as well
-      tracksRef.set({})
-        .then(() => {
-          console.log("All tracks data reset in Firebase");
-          updateLastUpdateTime();
-        })
-        .catch(error => {
-          console.error("Error resetting tracks data:", error);
-        });
+      // Reset visual track color
+      updateTrackVisual(trackId, '');
       
-      // Show reset confirmation
+      // Show feedback message
       const statusElement = document.getElementById('status');
       if (statusElement) {
-        statusElement.textContent = "Semua jalur telah direset!";
+        statusElement.textContent = `KA dari jalur ${trackId} telah berangkat!`;
         setTimeout(() => {
           statusElement.textContent = "Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.";
         }, 3000);
       }
-    });
-  }
-  
-  // Add input event listeners to all Ex KA input boxes
-  const allInputFields = document.querySelectorAll('input.input-box');
-  console.log("Found input fields:", allInputFields.length);
-  
-  allInputFields.forEach(input => {
-    console.log("Setting up listener for:", input.id);
-    input.addEventListener('input', function() {
-      if (isLoggedIn) {
-        const dataId = this.getAttribute('data-id');
-        if (dataId) {
-          const trackIdParts = dataId.split('-');
-          let trackId;
-          
-          if (trackIdParts.length >= 2) {
-            if (trackIdParts[1] === 'ex') {
-              // Handle format like "jalur-1-ex"
-              trackId = trackIdParts[0] + '-' + trackIdParts[1].split('ex')[0];
-            } else {
-              // Handle format like "cy2-1-ex"
-              trackId = trackIdParts[0] + '-' + trackIdParts[1];
-            }
-            
-            updateTrackData(trackId);
-          }
+    }
+    
+    // Update visual track
+    function updateTrackVisual(trackId, value) {
+      console.log("Updating visual for track:", trackId, "Value:", value, "Track element ID:", trackMap[trackId]);
+      
+      const trackElement = document.getElementById(trackMap[trackId]);
+      if (trackElement) {
+        if (value && value.trim() !== '') {
+          trackElement.style.stroke = 'red';
+          console.log("Set track to RED:", trackMap[trackId]);
+        } else {
+          trackElement.style.stroke = 'white';
+          console.log("Set track to WHITE:", trackMap[trackId]);
         }
+      } else {
+        console.error("Track element not found:", trackMap[trackId]);
       }
-      
-      // Always update visual
-      updateTrackColor(this);
-    });
-  });
-  
-  // Add direct click listeners to departure buttons
-  const departureButtons = document.querySelectorAll('button[onclick^="clearInputs"]');
-  departureButtons.forEach(button => {
-    const originalOnclick = button.getAttribute('onclick');
-    button.removeAttribute('onclick');
-    
-    button.addEventListener('click', function() {
-      if (!isLoggedIn) {
-        alert("Anda perlu login sebagai Editor untuk melakukan ini");
-        return;
-      }
-      
-      const trackId = originalOnclick.match(/'([^']+)'/)[1];
-      clearInputs(trackId);
-    });
-  });
-  
-  // Clean all tracks initially
-  Object.keys(trackMap).forEach(trackId => {
-    updateTrackVisual(trackId, '');
-  });
-  
-  // Setup Firebase connection monitoring
-  connectionRef.on('value', (snap) => {
-    if (snap.val() === true) {
-      // Connected
-      connectionDot.classList.remove('offline');
-      connectionDot.classList.add('online');
-      connectionText.textContent = 'Online';
-      
-      // Load initial data
-      loadDataFromFirebase();
-    } else {
-      // Disconnected
-      connectionDot.classList.remove('online');
-      connectionDot.classList.add('offline');
-      connectionText.textContent = 'Offline';
     }
-  });
-  
-  // Setup real-time updates
-  tracksRef.on('value', (snapshot) => {
-    // Update the data display
-    updateDataFromFirebase(snapshot.val());
-  });
-});
-
-// Load data from Firebase
-function loadDataFromFirebase() {
-  tracksRef.once('value')
-    .then((snapshot) => {
-      console.log("Loaded initial data from Firebase");
-      updateDataFromFirebase(snapshot.val());
-      updateLastUpdateTime();
-    })
-    .catch((error) => {
-      console.error("Error loading data from Firebase:", error);
-    });
-}
-
-// Update UI with data from Firebase
-function updateDataFromFirebase(data) {
-  if (!data) {
-    console.log("No data available from Firebase");
-    return;
-  }
-  
-  // Turn off listeners before updating to prevent circular updates
-  const allInputs = document.querySelectorAll('input.input-box');
-  allInputs.forEach(input => {
-    input.removeEventListener('input', updateTrackColor);
-  });
-  
-  // Update each track's inputs
-  Object.keys(data).forEach(trackId => {
-    const trackData = data[trackId];
-    
-    // Update inputs
-    Object.keys(trackData).forEach(fieldType => {
-      if (fieldType !== 'lastUpdate' && fieldType !== 'updatedBy') {
-        const input = document.querySelector(`[data-id="${trackId}-${fieldType}"]`);
-        if (input) {
-          input.value = trackData[fieldType] || '';
-        }
-      }
-    });
-    
-    // Update visual
-    updateTrackVisual(trackId, trackData.ex || '');
-  });
-  
-  // Re-add listeners
-  allInputs.forEach(input => {
-    input.addEventListener('input', function() {
-      updateTrackColor(this);
-    });
-  });
-  
-  // Update last update time if data exists
-  if (Object.keys(data).length > 0) {
-    updateLastUpdateTime();
-  }
-}
-
-// ===== HELPER FUNCTIONS =====
-
-// Set editor mode
-function setEditorMode(isEditor) {
-  // Toggle editor-only elements
-  editorOnlyElements.forEach(element => {
-    if (isEditor) {
-      element.classList.remove('read-only');
-    } else {
-      element.classList.add('read-only');
-    }
-  });
-  
-  // Toggle input elements
-  const inputElements = document.querySelectorAll('.input-box');
-  inputElements.forEach(input => {
-    input.disabled = !isEditor;
-  });
-  
-  // Toggle buttons
-  const buttonElements = document.querySelectorAll('.editor-only button');
-  buttonElements.forEach(button => {
-    button.disabled = !isEditor;
-  });
-}
-
-// Clear inputs
-function clearInputs(trackId) {
-  console.log("Clearing inputs for track:", trackId);
-  
-  // Check if logged in
-  if (!isLoggedIn) {
-    alert("Anda perlu login sebagai Editor untuk melakukan ini");
-    return;
-  }
-  
-  // Clear in interface
-  const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
-  console.log("Found inputs to clear:", inputs.length);
-  
-  inputs.forEach(input => {
-    input.value = '';
-  });
-  
-  // Reset visual track color
-  updateTrackVisual(trackId, '');
-  
-  // Clear in Firebase
-  tracksRef.child(trackId).remove()
-    .then(() => {
-      console.log(`Track ${trackId} data cleared in Firebase`);
-      updateLastUpdateTime();
-    })
-    .catch(error => {
-      console.error(`Error clearing track ${trackId} data:`, error);
-    });
-  
-  // Show feedback message
-  const statusElement = document.getElementById('status');
-  if (statusElement) {
-    statusElement.textContent = `KA dari jalur ${trackId} telah berangkat!`;
-    setTimeout(() => {
-      statusElement.textContent = "Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.";
-    }, 3000);
-  }
-}
-
-// Update visual track
-function updateTrackVisual(trackId, value) {
-  console.log("Updating visual for track:", trackId, "Value:", value, "Track element ID:", trackMap[trackId]);
-  
-  const trackElement = document.getElementById(trackMap[trackId]);
-  if (trackElement) {
-    if (value && value.trim() !== '') {
-      trackElement.style.stroke = 'red';
-      console.log("Set track to RED:", trackMap[trackId]);
-    } else {
-      trackElement.style.stroke = 'white';
-      console.log("Set track to WHITE:", trackMap[trackId]);
-    }
-  } else {
-    console.error("Track element not found:", trackMap[trackId]);
-  }
-}
-</script>
+  </script>
