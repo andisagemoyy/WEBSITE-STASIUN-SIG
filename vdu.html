@@ -4,22 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Simpang | Real-time KA Monitoring</title>
-  <link rel="shortcut icon" href="assets/logo (2).png" type="image/x-icon">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
       background-color: black;
       color: white;
+      overflow-x: hidden;
     }
     .tabs {
       display: flex;
       justify-content: center;
       background-color: #111;
       border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .tab-button {
       padding: 12px 20px;
@@ -43,13 +48,15 @@
     /* Common styles for all tabs */
     .yard {
       position: relative;
-      width: 1000px;
-      height: 600px;
+      width: 100%;  /* Full width */
+      height: 80vh; /* Use viewport height */
       margin: auto;
+      overflow: auto; /* Add scrolling if needed */
+      scroll-behavior: smooth; /* Smooth scrolling */
     }
     .track {
       stroke: white;
-      stroke-width: 2;
+      stroke-width: 4; /* Increased thickness */
       fill: none;
       transition: stroke 0.3s;
     }
@@ -58,23 +65,31 @@
       position: absolute;
       align-items: center;
     }
+    
     .arrow {
       color: white;
-      font-size: 14px;
-      margin: 0 4px;
+      font-size: 16px;
+      margin: 0 6px;
     }
+
     .input-box {
-      width: 80px;
-      height: 20px;
-      background: transparent;
+      width: 120px;
+      height: 30px;
+      background: rgba(255,255,255,0.1);
       border: 2px solid white;
       color: white;
       text-align: center;
-      font-size: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 5px #ffffff;
+      border-radius: 6px;
+      backdrop-filter: blur(3px);
     }
+
     .input-box::placeholder {
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.5);
     }
+
     .controls {
       position: absolute;
       top: 10px;
@@ -89,27 +104,29 @@
       color: white;
       border: 1px solid rgba(255,255,255,0.3);
       border-radius: 4px;
-      padding: 5px 10px;
+      padding: 6px 12px; /* Increased padding */
       margin: 3px;
       cursor: pointer;
       transition: background-color 0.3s;
+      font-size: 14px; /* Increased font */
     }
     button:hover {
       background-color: rgba(100,100,100,0.8);
     }
     .status {
       color: rgba(255,255,255,0.7);
-      font-size: 12px;
+      font-size: 14px; /* Increased font */
       margin-top: 10px;
       text-align: center;
     }
     .label {
       position: absolute;
       left: 5px;
-      font-size: 12px;
+      font-size: 16px; /* Increased font */
       background-color: rgba(255,255,255,0.1);
-      padding: 2px 6px;
+      padding: 4px 8px;
       border-radius: 4px;
+      font-weight: bold;
     }
     .track.permanent {
       stroke: white !important;
@@ -127,27 +144,28 @@
       left: 10px;
     }
     #wbs .input-box {
-      width: 70px;
-      margin: 0 2px;
+      width: 100px;
+      margin: 0 3px;
     }
     /* Indikator live */
     .live-indicator {
       position: fixed;
-      top: 5px;
-      right: 5px;
+      top: 10px;
+      right: 10px;
       background-color: rgba(0,0,0,0.7);
-      padding: 5px 10px;
+      padding: 8px 15px;
       border-radius: 5px;
       z-index: 1000;
       display: flex;
       align-items: center;
+      font-size: 16px;
     }
     .live-dot {
-      width: 8px;
-      height: 8px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background-color: red;
-      margin-right: 5px;
+      margin-right: 8px;
       animation: blink 1s infinite;
     }
     @keyframes blink {
@@ -159,8 +177,8 @@
     /* Login Styles */
     .login-container {
       position: fixed;
-      top: 5px;
-      left: 5px;
+      top: 10px;
+      left: 10px;
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -171,9 +189,9 @@
       color: white;
       border: 1px solid rgba(255,255,255,0.3);
       border-radius: 4px;
-      padding: 5px 15px;
+      padding: 8px 15px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
       display: flex;
       align-items: center;
     }
@@ -183,17 +201,17 @@
     }
     
     .login-icon {
-      margin-right: 5px;
-      font-size: 16px;
+      margin-right: 8px;
+      font-size: 18px;
     }
     
     .user-status {
       background-color: rgba(0,0,0,0.7);
       color: rgba(255,255,255,0.8);
       border-radius: 4px;
-      padding: 5px 15px;
+      padding: 8px 15px;
       margin-left: 10px;
-      font-size: 12px;
+      font-size: 14px;
     }
     
     .editor-status {
@@ -291,6 +309,55 @@
       pointer-events: none;
       opacity: 0.7;
     }
+    
+    /* Center marker for debugging */
+    .center-marker {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: yellow;
+      border-radius: 50%;
+      z-index: 100;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    /* Connection status indicator */
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      right: 100px;
+      background-color: rgba(0,0,0,0.7);
+      padding: 8px 15px;
+      border-radius: 5px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+    .connection-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .connection-dot.online {
+      background-color: #4CAF50;
+    }
+    .connection-dot.offline {
+      background-color: #f44336;
+    }
+    .last-update {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(0,0,0,0.7);
+      padding: 8px 15px;
+      border-radius: 5px;
+      z-index: 1000;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
   </style>
 </head>
 <body>
@@ -325,6 +392,17 @@
     <div class="live-dot"></div>
     <span>LIVE</span>
   </div>
+  
+  <!-- Connection Status -->
+  <div class="connection-status">
+    <div class="connection-dot offline" id="connection-dot"></div>
+    <span id="connection-text">Offline</span>
+  </div>
+  
+  <!-- Last update time -->
+  <div class="last-update" id="last-update">
+    Last update: -
+  </div>
 
   <div class="tabs">
     <button class="tab-button active" onclick="switchTab('rmk')">CY RMK</button>
@@ -334,32 +412,32 @@
 
   <div id="rmk" class="tab-content active">
     <div class="yard">
-      <svg width="1000" height="600" style="position: absolute; top: 0; left: 0;">
-        <!-- Jalur tetap -->
-        <polyline id="main-track" points="1000,300 850,300 800,250" stroke="white" stroke-width="3" fill="none" class="track" />
-        <polyline id="w1-w3" points="800,250 750,250" stroke="white" stroke-width="3" fill="none" class="track" />
-        <polyline id="w1-w2" points="800,250 750,350" stroke="white" stroke-width="3" fill="none" class="track" />
+      <svg width="1400" height="800" viewBox="0 0 1400 800">
+        <!-- Jalur tetap dengan skala lebih besar -->
+        <polyline id="main-track" points="1400,400 1190,400 1120,330" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="w1-w3" points="1120,330 1050,330" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="w1-w2" points="1120,330 1050,470" stroke="white" stroke-width="6" fill="none" class="track" />
   
         <!-- CY 2 Jalur 1 -->
-        <polyline id="track-cy2-1-serong" points="750,250 700,200" stroke="white" stroke-width="3" fill="none" class="track" />
-        <polyline id="track-cy2-1-lurus" points="700,200 250,200" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy2-1-serong" points="1050,330 980,260" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="track-cy2-1-lurus" points="980,260 200,260" stroke="white" stroke-width="6" fill="none" class="track" />
   
         <!-- CY 2 Jalur 2 -->
-        <polyline id="track-cy2-2" points="750,250 250,250" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy2-2" points="1050,330 200,330" stroke="white" stroke-width="6" fill="none" class="track" />
   
         <!-- CY 2 Jalur 3 -->
-        <polyline id="track-cy2-3-serong" points="750,250 700,300" stroke="white" stroke-width="3" fill="none" class="track" />
-        <polyline id="track-cy2-3-lurus" points="700,300 250,300" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy2-3-serong" points="1050,330 980,400" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="track-cy2-3-lurus" points="980,400 200,400" stroke="white" stroke-width="6" fill="none" class="track" />
   
         <!-- CY 3A -->
-        <polyline id="track-cy3a" points="750,350 250,350" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy3a" points="1050,470 200,470" stroke="white" stroke-width="6" fill="none" class="track" />
   
         <!-- CY 3B -->
-        <polyline id="track-cy3b" points="750,350 700,400 250,400" stroke="white" stroke-width="3" fill="none" class="track" />
+        <polyline id="track-cy3b" points="1050,470 980,540 200,540" stroke="white" stroke-width="6" fill="none" class="track" />
       </svg>
   
       <!-- Input Pairs -->
-      <div class="input-pair editor-only" style="top: 190px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 250px; left: 350px;">
         <input class="input-box" id="box-cy2-1" placeholder="Ex KA" data-id="cy2-1-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-1" placeholder="Rencana" data-id="cy2-1-plan" />
@@ -367,7 +445,7 @@
         <input class="input-box" id="sf-cy2-1" placeholder="SF" data-id="cy2-1-sf" />
         <button onclick="clearInputs('cy2-1')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 240px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 320px; left: 350px;">
         <input class="input-box" id="box-cy2-2" placeholder="Ex KA" data-id="cy2-2-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-2" placeholder="Rencana" data-id="cy2-2-plan" />
@@ -375,7 +453,7 @@
         <input class="input-box" id="sf-cy2-2" placeholder="SF" data-id="cy2-2-sf" />
         <button onclick="clearInputs('cy2-2')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 290px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 390px; left: 350px;">
         <input class="input-box" id="box-cy2-3" placeholder="Ex KA" data-id="cy2-3-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy2-3" placeholder="Rencana" data-id="cy2-3-plan" />
@@ -383,7 +461,7 @@
         <input class="input-box" id="sf-cy2-3" placeholder="SF" data-id="cy2-3-sf" />
         <button onclick="clearInputs('cy2-3')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 340px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 460px; left: 350px;">
         <input class="input-box" id="box-cy3a" placeholder="Ex KA" data-id="cy3a-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy3a" placeholder="Rencana" data-id="cy3a-plan" />
@@ -391,7 +469,7 @@
         <input class="input-box" id="sf-cy3a" placeholder="SF" data-id="cy3a-sf" />
         <button onclick="clearInputs('cy3a')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 390px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 530px; left: 350px;">
         <input class="input-box" id="box-cy3b" placeholder="Ex KA" data-id="cy3b-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="plan-cy3b" placeholder="Rencana" data-id="cy3b-plan" />
@@ -401,15 +479,15 @@
       </div>
   
       <!-- Labels -->
-      <div class="label" style="top: 190px;">CY 2 JALUR 1</div>
-      <div class="label" style="top: 240px;">CY 2 JALUR 2</div>
-      <div class="label" style="top: 290px;">CY 2 JALUR 3</div>
-      <div class="label" style="top: 340px;">CY 3A</div>
-      <div class="label" style="top: 390px;">CY 3B</div>
+      <div class="label" style="top: 250px;">CY 2 JALUR 1</div>
+      <div class="label" style="top: 320px;">CY 2 JALUR 2</div>
+      <div class="label" style="top: 390px;">CY 2 JALUR 3</div>
+      <div class="label" style="top: 460px;">CY 3A</div>
+      <div class="label" style="top: 530px;">CY 3B</div>
   
       <!-- Controls -->
-      <div class="controls editor-only">
-        <button id="reset">Reset Semua</button>
+      <div class="controls">
+        <button id="reset" class="editor-only">Reset Semua</button>
         <div class="status" id="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
       </div>
     </div>
@@ -417,31 +495,31 @@
 
   <div id="wbs" class="tab-content">
     <div class="yard">
-      <svg width="1000" height="600">
+      <svg width="1400" height="800" viewBox="0 0 1400 800">
         <!-- Jalur 1 (perpanjang ke kiri) -->
-        <polyline id="jalur-1" points="100,100 800,100" class="track" />
+        <polyline id="jalur-1" points="100,150 1200,150" class="track" stroke-width="6" />
         
         <!-- Jalur 2 (terpisah antara horizontal dan serong) -->
-        <polyline id="jalur-2-horizontal" points="100,160 540,160" class="track" />
-        <polyline id="jalur-2-diagonal" points="540,160 600,130 650,100" class="track permanent" />
+        <polyline id="jalur-2-horizontal" points="100,250 800,250" class="track" stroke-width="6" />
+        <polyline id="jalur-2-diagonal" points="800,250 900,200 950,150" class="track permanent" stroke-width="6" />
         
         <!-- Jalur 3 (terpisah antara horizontal dan serong) -->
-        <polyline id="jalur-3-horizontal" points="100,220 360,220" class="track" />
-        <polyline id="jalur-3-diagonal" points="360,220 420,190 480,160" class="track permanent" />
+        <polyline id="jalur-3-horizontal" points="100,350 500,350" class="track" stroke-width="6" />
+        <polyline id="jalur-3-diagonal" points="500,350 600,300 700,250" class="track permanent" stroke-width="6" />
         
         <!-- Jalur 4 (terpisah antara horizontal dan serong) -->
-        <polyline id="jalur-4-horizontal" points="100,280 260,280" class="track" />
-        <path id="jalur-4-diagonal" d="M260,280 Q300,250 360,220" class="track permanent" />
+        <polyline id="jalur-4-horizontal" points="100,450 350,450" class="track" stroke-width="6" />
+        <path id="jalur-4-diagonal" d="M350,450 Q420,400 500,350" class="track permanent" stroke-width="6" />
       </svg>
   
       <!-- Labels -->
-      <div class="label" style="top: 90px;">WBS JALUR 1</div>
-      <div class="label" style="top: 150px;">WBS JALUR 2</div>
-      <div class="label" style="top: 210px;">WBS JALUR 3</div>
-      <div class="label" style="top: 270px;">WBS JALUR 4</div>
+      <div class="label" style="top: 140px;">WBS JALUR 1</div>
+      <div class="label" style="top: 240px;">WBS JALUR 2</div>
+      <div class="label" style="top: 340px;">WBS JALUR 3</div>
+      <div class="label" style="top: 440px;">WBS JALUR 4</div>
   
       <!-- Kotak Input (ditempatkan di tengah jalur lurus) -->
-      <div class="input-pair editor-only" style="top: 85px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 140px; left: 350px;">
         <input class="input-box" id="ex-jalur-1" placeholder="Ex KA" data-id="jalur-1-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-1" placeholder="Rencana" data-id="jalur-1-ren">
@@ -450,7 +528,7 @@
         <button onclick="clearInputs('jalur-1')">🚉</button>
       </div>
       
-      <div class="input-pair editor-only" style="top: 145px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 240px; left: 350px;">
         <input class="input-box" id="ex-jalur-2" placeholder="Ex KA" data-id="jalur-2-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-2" placeholder="Rencana" data-id="jalur-2-ren">
@@ -459,7 +537,7 @@
         <button onclick="clearInputs('jalur-2')">🚉</button>
       </div>
       
-      <div class="input-pair editor-only" style="top: 205px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 340px; left: 350px;">
         <input class="input-box" id="ex-jalur-3" placeholder="Ex KA" data-id="jalur-3-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-3" placeholder="Rencana" data-id="jalur-3-ren">
@@ -468,7 +546,7 @@
         <button onclick="clearInputs('jalur-3')">🚉</button>
       </div>
       
-      <div class="input-pair editor-only" style="top: 265px; left: 150px;">
+      <div class="input-pair editor-only" style="top: 440px; left: 350px;">
         <input class="input-box" id="ex-jalur-4" placeholder="Ex KA" data-id="jalur-4-ex">
         <span class="arrow">➡</span>
         <input class="input-box" id="ren-jalur-4" placeholder="Rencana" data-id="jalur-4-ren">
@@ -476,32 +554,37 @@
         <input class="input-box" id="sf-jalur-4" placeholder="SF" data-id="jalur-4-sf">
         <button onclick="clearInputs('jalur-4')">🚉</button>
       </div>
+      
+      <!-- Controls -->
+      <div class="controls">
+        <div class="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
+      </div>
     </div>
   </div>
 
   <div id="fms" class="tab-content">
     <div class="yard">
-      <svg width="1000" height="600">
+      <svg width="1400" height="800" viewBox="0 0 1400 800">
         <!-- Jalur 1 -->
-        <polyline id="track-fms-1-serong" points="750,250 700,200" class="track" />
-        <polyline id="track-fms-1-lurus" points="700,200 250,200" class="track" />
+        <polyline id="track-fms-1-serong" points="1050,330 980,260" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="track-fms-1-lurus" points="980,260 200,260" stroke="white" stroke-width="6" fill="none" class="track" />
         
         <!-- Jalur 2 (hanya ke kiri, yang dikontrol oleh kotak input) -->
-        <polyline id="track-fms-2" points="750,250 250,250" class="track" />
-        <polyline points="750,250 900,250" class="track" style="stroke:white; stroke-width:3;" />
+        <polyline id="track-fms-2" points="1050,330 200,330" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline points="1050,330 1260,330" class="track" style="stroke:white; stroke-width:6;" />
         
         <!-- Jalur 3 -->
-        <polyline id="track-fms-3-serong" points="750,250 700,300" class="track" />
-        <polyline id="track-fms-3-lurus" points="700,300 250,300" class="track" />
+        <polyline id="track-fms-3-serong" points="1050,330 980,400" stroke="white" stroke-width="6" fill="none" class="track" />
+        <polyline id="track-fms-3-lurus" points="980,400 200,400" stroke="white" stroke-width="6" fill="none" class="track" />
       </svg>
 
       <!-- Labels -->
-      <div class="label" style="top: 190px;">FMS JALUR 1</div>
-      <div class="label" style="top: 240px;">FMS JALUR 2</div>
-      <div class="label" style="top: 290px;">FMS JALUR 3</div>
+      <div class="label" style="top: 250px;">FMS JALUR 1</div>
+      <div class="label" style="top: 320px;">FMS JALUR 2</div>
+      <div class="label" style="top: 390px;">FMS JALUR 3</div>
 
       <!-- Input Pairs -->
-      <div class="input-pair editor-only" style="top: 190px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 250px; left: 350px;">
         <input class="input-box" id="fms-box-1" placeholder="Ex KA" data-id="fms-1-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-1" placeholder="Rencana" data-id="fms-1-plan" />
@@ -509,7 +592,7 @@
         <input class="input-box" id="fms-sf-1" placeholder="SF" data-id="fms-1-sf" />
         <button onclick="clearInputs('fms-1')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 240px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 320px; left: 350px;">
         <input class="input-box" id="fms-box-2" placeholder="Ex KA" data-id="fms-2-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-2" placeholder="Rencana" data-id="fms-2-plan" />
@@ -517,7 +600,7 @@
         <input class="input-box" id="fms-sf-2" placeholder="SF" data-id="fms-2-sf" />
         <button onclick="clearInputs('fms-2')">🚉</button>
       </div>
-      <div class="input-pair editor-only" style="top: 290px; left: 280px;">
+      <div class="input-pair editor-only" style="top: 390px; left: 350px;">
         <input class="input-box" id="fms-box-3" placeholder="Ex KA" data-id="fms-3-ex" />
         <span class="arrow">➜</span>
         <input class="input-box" id="fms-plan-3" placeholder="Rencana" data-id="fms-3-plan" />
@@ -525,242 +608,580 @@
         <input class="input-box" id="fms-sf-3" placeholder="SF" data-id="fms-3-sf" />
         <button onclick="clearInputs('fms-3')">🚉</button>
       </div>
+      
+      <!-- Controls -->
+      <div class="controls">
+        <div class="status">Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.</div>
+      </div>
     </div>
   </div>
 
-  <script>
-    // ===== FIREBASE KONFIGURASI =====
-    const firebaseConfig = {
-      apiKey: "AIzaSyC6gE0Uqh6PisJWIeiiBrjYYiXKVliw1lg",
-      authDomain: "andisagemoy.firebaseapp.com",
-      databaseURL: "https://andisagemoy-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "andisagemoy",
-      storageBucket: "andisagemoy.firebasestorage.app",
-      messagingSenderId: "977705794727",
-      appId: "1:977705794727:web:2e0111ad3374ccae3f6f82",
-      measurementId: "G-K7C06YSQ11"
-    };
+  
+<script>
+// ===== FIREBASE KONFIGURASI =====
+const firebaseConfig = {
+  apiKey: "AIzaSyC6gE0Uqh6PisJWIeiiBrjYYiXKVliw1lg",
+  authDomain: "andisagemoy.firebaseapp.com",
+  databaseURL: "https://andisagemoy-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "andisagemoy",
+  storageBucket: "andisagemoy.appspot.com",
+  messagingSenderId: "977705794727",
+  appId: "1:977705794727:web:2e0111ad3374ccae3f6f82",
+  measurementId: "G-K7C06YSQ11"
+};
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Define database reference
+const tracksRef = database.ref('tracks');
+const connectionRef = database.ref('.info/connected');
+
+// ===== VARIABEL LOGIN =====
+const CORRECT_USERNAME = "ADMIN";
+const CORRECT_PASSWORD = "ADMIN";
+let isLoggedIn = false;
+
+// ===== Mapping jalur-jalur untuk update visual =====
+const trackMap = {
+  'cy2-1': 'track-cy2-1-lurus',
+  'cy2-2': 'track-cy2-2',
+  'cy2-3': 'track-cy2-3-lurus',
+  'cy3a': 'track-cy3a',
+  'cy3b': 'track-cy3b',
+  'fms-1': 'track-fms-1-lurus',
+  'fms-2': 'track-fms-2',
+  'fms-3': 'track-fms-3-lurus',
+  'jalur-1': 'jalur-1',
+  'jalur-2': 'jalur-2-horizontal',
+  'jalur-3': 'jalur-3-horizontal',
+  'jalur-4': 'jalur-4-horizontal'
+};
+
+// ===== DOM ELEMENTS =====
+let loginBtn;
+let loginModal;
+let closeBtn;
+let loginForm;
+let loginError;
+let userStatus;
+let editorOnlyElements;
+let connectionDot;
+let connectionText;
+let lastUpdateElement;
+
+// Store scroll positions for each tab
+const scrollPositions = {
+  'rmk': 0,
+  'wbs': 0,
+  'fms': 0
+};
+
+// Function to format current time
+function getCurrentTimeFormatted() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+// Function to center tab content on specific y-coordinate
+function centerTabContent(tabId, yPosition) {
+  const tabContent = document.getElementById(tabId);
+  if (tabContent) {
+    const yard = tabContent.querySelector('.yard');
+    if (yard) {
+      // Calculate the vertical scroll position to center the target y-coordinate
+      const windowHeight = window.innerHeight;
+      const tabsHeight = document.querySelector('.tabs').offsetHeight;
+      const scrollTop = yPosition - (windowHeight - tabsHeight) / 2;
+      
+      // Apply the scroll position (only if not previously scrolled by user)
+      if (scrollPositions[tabId] === 0) {
+        yard.scrollTop = Math.max(0, scrollTop);
+        scrollPositions[tabId] = yard.scrollTop;
+        console.log(`Centered ${tabId} at y=${yPosition}px`);
+      } else {
+        // Restore previous scroll position
+        yard.scrollTop = scrollPositions[tabId];
+        console.log(`Restored ${tabId} scroll to ${scrollPositions[tabId]}px`);
+      }
+    }
+  }
+}
+
+// Function to save scroll position
+function saveScrollPosition(tabId) {
+  const tabContent = document.getElementById(tabId);
+  if (tabContent) {
+    const yard = tabContent.querySelector('.yard');
+    if (yard) {
+      scrollPositions[tabId] = yard.scrollTop;
+      console.log(`Saved ${tabId} scroll position: ${yard.scrollTop}px`);
+    }
+  }
+}
+
+// Function to switch tab and handle scroll positions
+function switchTab(tabId) {
+  console.log("Tab function called with:", tabId);
+  
+  // Save current tab's scroll position before switching
+  document.querySelectorAll('.tab-content.active').forEach(el => {
+    saveScrollPosition(el.id);
+  });
+  
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(el => {
+    el.classList.remove('active');
+    console.log("Removed active from:", el.id);
+  });
+  
+  // Remove active class from all buttons
+  document.querySelectorAll('.tab-button').forEach(el => {
+    el.classList.remove('active');
+  });
+  
+  // Show selected tab
+  const tabToShow = document.getElementById(tabId);
+  if (tabToShow) {
+    tabToShow.classList.add('active');
+    console.log("Activated tab:", tabId);
     
-    // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    
-    // ===== LOGIN VARIABLES =====
-    const CORRECT_USERNAME = "PAP";
-    const CORRECT_PASSWORD = "ADMIN";
-    let isLoggedIn = false;
-    
-    // ===== Mapping jalur-jalur untuk update visual =====
-    const trackMap = {
-      'cy2-1': 'track-cy2-1-lurus',
-      'cy2-2': 'track-cy2-2',
-      'cy2-3': 'track-cy2-3-lurus',
-      'cy3a': 'track-cy3a',
-      'cy3b': 'track-cy3b',
-      'fms-1': 'track-fms-1-lurus',
-      'fms-2': 'track-fms-2',
-      'fms-3': 'track-fms-3-lurus'
-    };
-    
-    // ===== DOM ELEMENTS =====
-    let loginBtn;
-    let loginModal;
-    let closeBtn;
-    let loginForm;
-    let loginError;
-    let userStatus;
-    let editorOnlyElements;
-    
-    // ===== SETUP EVENT LISTENERS =====
-    document.addEventListener('DOMContentLoaded', function() {
-      // Setup login elements
-      loginBtn = document.getElementById('loginToggleBtn');
-      loginModal = document.getElementById('loginModal');
-      closeBtn = document.querySelector('.close-btn');
-      loginForm = document.getElementById('loginBtn');
-      loginError = document.getElementById('loginError');
-      userStatus = document.querySelector('.user-status span');
-      
-      // Get all editor-only elements
-      editorOnlyElements = document.querySelectorAll('.editor-only');
-      
-      // Initially disable all editor-only elements
-      setEditorMode(false);
-      
-      // Setup login button
-      loginBtn.addEventListener('click', function() {
-        loginModal.style.display = 'flex';
-      });
-      
-      // Setup close button
-      closeBtn.addEventListener('click', function() {
-        loginModal.style.display = 'none';
-      });
-      
-      // Setup login form submission
-      loginForm.addEventListener('click', function() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
-          // Login successful
-          isLoggedIn = true;
-          loginModal.style.display = 'none';
-          userStatus.textContent = 'Mode: Editor';
-          userStatus.className = 'editor-status';
-          loginBtn.innerHTML = '<span class="login-icon">🔒</span> Log Out';
-          setEditorMode(true);
-        } else {
-          // Login failed
-          loginError.style.display = 'block';
-          setTimeout(() => {
-            loginError.style.display = 'none';
-          }, 3000);
-        }
-      });
-      
-      // Toggle login/logout
-      loginBtn.addEventListener('click', function() {
-        if (isLoggedIn) {
-          // Log out
-          isLoggedIn = false;
-          userStatus.textContent = 'Mode: Viewer';
-          userStatus.className = 'viewer-status';
-          loginBtn.innerHTML = '<span class="login-icon">👤</span> Log In';
-          setEditorMode(false);
-        } else {
-          // Show login modal
-          loginModal.style.display = 'flex';
-        }
-      });
-      
-      // Close modal when clicking outside
-      window.addEventListener('click', function(event) {
-        if (event.target === loginModal) {
-          loginModal.style.display = 'none';
-        }
-      });
-      
-      // Tambahkan event listener untuk semua input box
-      document.querySelectorAll('.input-box').forEach(function(input) {
-        input.addEventListener('input', function() {
-          // Simpan ke Firebase setiap kali nilai diubah
-          const dataId = this.getAttribute('data-id');
-          database.ref('data/' + dataId).set(this.value);
-        });
-      });
-      
-      // Setup tombol reset
-      document.getElementById('reset').addEventListener('click', function() {
-        // Clear semua input pada tab RMK
-        clearInputs('cy2-1');
-        clearInputs('cy2-2');
-        clearInputs('cy2-3');
-        clearInputs('cy3a');
-        clearInputs('cy3b');
-      });
-      
-      // Listen untuk updates dari Firebase
-      database.ref('data').on('value', function(snapshot) {
-        const data = snapshot.val() || {};
-        
-        // Update semua input box dari data yang diterima
-        for (const [key, value] of Object.entries(data)) {
-          const input = document.querySelector(`[data-id="${key}"]`);
-          if (input && input.value !== value) {
-            input.value = value;
-          }
-          
-          // Update visual jalur jika ini adalah input Ex KA
-          if (key.endsWith('-ex')) {
-            const trackId = key.split('-ex')[0];
-            updateTrackVisual(trackId, value);
-          }
-        }
-      });
+    // Center the tab content or restore previous scroll position
+    centerTabContent(tabId, tabId === 'rmk' ? 390 : (tabId === 'wbs' ? 250 : 330));
+  } else {
+    console.error("Tab not found:", tabId);
+  }
+  
+  // Activate corresponding button
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    if (btn.textContent.toUpperCase().includes(tabId.toUpperCase())) {
+      btn.classList.add('active');
+      console.log("Activated button:", btn.textContent);
+    }
+  });
+}
+
+// Update track color when input changes
+function updateTrackColor(input) {
+  const dataId = input.getAttribute('data-id');
+  if (!dataId) {
+    console.error("No data-id attribute on input:", input.id);
+    return;
+  }
+  
+  const trackIdParts = dataId.split('-');
+  let trackId;
+  
+  if (trackIdParts.length >= 2) {
+    if (trackIdParts[1] === 'ex') {
+      // Handle format like "jalur-1-ex"
+      trackId = trackIdParts[0] + '-' + trackIdParts[1].split('ex')[0];
+    } else {
+      // Handle format like "cy2-1-ex"
+      trackId = trackIdParts[0] + '-' + trackIdParts[1];
+    }
+  } else {
+    console.error("Invalid data-id format:", dataId);
+    return;
+  }
+  
+  const value = input.value.trim();
+  console.log("Updating track:", trackId, "Value:", value, "TrackMap entry:", trackMap[trackId]);
+  
+  updateTrackVisual(trackId, value);
+  
+  // Update in Firebase if logged in
+  if (isLoggedIn) {
+    updateTrackData(trackId);
+  }
+}
+
+// Function to update track data in Firebase
+function updateTrackData(trackId) {
+  if (!isLoggedIn) return;
+  
+  // Get all input values for this track
+  let trackData = {};
+  
+  // Find all inputs related to this track
+  document.querySelectorAll(`[data-id^="${trackId}-"]`).forEach(input => {
+    const dataId = input.getAttribute('data-id');
+    const fieldType = dataId.split('-').pop(); // ex, plan/ren, sf
+    trackData[fieldType] = input.value.trim();
+  });
+  
+  // Add timestamp
+  trackData.lastUpdate = firebase.database.ServerValue.TIMESTAMP;
+  trackData.updatedBy = "Editor"; // Could be the username in the future
+  
+  // Update in Firebase
+  tracksRef.child(trackId).set(trackData)
+    .then(() => {
+      console.log(`Track ${trackId} data updated in Firebase`);
+      updateLastUpdateTime();
+    })
+    .catch(error => {
+      console.error(`Error updating track ${trackId} data:`, error);
     });
-    
-    // ===== HELPER FUNCTIONS =====
-    
-    // Set editor mode
-    function setEditorMode(isEditor) {
-      // Toggle editor-only elements
-      editorOnlyElements.forEach(element => {
-        if (isEditor) {
-          element.classList.remove('read-only');
-        } else {
-          element.classList.add('read-only');
-        }
-      });
-      
-      // Toggle input elements
-      const inputElements = document.querySelectorAll('.input-box');
-      inputElements.forEach(input => {
-        input.disabled = !isEditor;
-      });
-      
-      // Toggle buttons
-      const buttonElements = document.querySelectorAll('.editor-only button');
-      buttonElements.forEach(button => {
-        button.disabled = !isEditor;
-      });
+}
+
+// Function to update the last update time display
+function updateLastUpdateTime() {
+  if (lastUpdateElement) {
+    lastUpdateElement.textContent = `Last update: ${getCurrentTimeFormatted()}`;
+  }
+}
+
+// ===== SETUP EVENT LISTENERS =====
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("DOM fully loaded");
+  
+  // Setup login elements
+  loginBtn = document.getElementById('loginToggleBtn');
+  loginModal = document.getElementById('loginModal');
+  closeBtn = document.querySelector('.close-btn');
+  loginForm = document.getElementById('loginBtn');
+  loginError = document.getElementById('loginError');
+  userStatus = document.querySelector('.user-status span');
+  connectionDot = document.getElementById('connection-dot');
+  connectionText = document.getElementById('connection-text');
+  lastUpdateElement = document.getElementById('last-update');
+  
+  // Get all editor-only elements
+  editorOnlyElements = document.querySelectorAll('.editor-only');
+  
+  // Initially disable all editor-only elements
+  setEditorMode(false);
+  
+  // Center each tab content on its middle track only for first load
+  centerTabContent('rmk', 390); // CY2 Jalur 3 (390px)
+  
+  // Setup scroll position saving for all yard containers
+  document.querySelectorAll('.yard').forEach(yard => {
+    yard.addEventListener('scroll', function() {
+      const tabId = this.closest('.tab-content').id;
+      scrollPositions[tabId] = this.scrollTop;
+      console.log(`Updated ${tabId} scroll position to ${this.scrollTop}px`);
+    });
+  });
+  
+  // Setup login button
+  loginBtn.addEventListener('click', function() {
+    if (!isLoggedIn) {
+      loginModal.style.display = 'flex';
+    } else {
+      // Log out
+      isLoggedIn = false;
+      userStatus.textContent = 'Mode: Viewer';
+      userStatus.className = 'viewer-status';
+      loginBtn.innerHTML = '<span class="login-icon">👤</span> Log In';
+      setEditorMode(false);
     }
+  });
+  
+  // Setup close button
+  closeBtn.addEventListener('click', function() {
+    loginModal.style.display = 'none';
+  });
+  
+  // Setup login form submission
+  loginForm.addEventListener('click', function() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
     
-    // Clear inputs
-    function clearInputs(trackId) {
-      // Check if logged in
-      if (!isLoggedIn) return;
-      
-      // Clear di interface
-      const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
-      inputs.forEach(input => {
-        input.value = '';
-      });
-      
-      // Clear di Firebase
-      database.ref('data/' + trackId + '-ex').set('');
-      database.ref('data/' + trackId + '-plan').set('');
-      database.ref('data/' + trackId + '-sf').set('');
-      database.ref('data/' + trackId + '-ren').set('');
+    if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+      // Login successful
+      isLoggedIn = true;
+      loginModal.style.display = 'none';
+      userStatus.textContent = 'Mode: Editor';
+      userStatus.className = 'editor-status';
+      loginBtn.innerHTML = '<span class="login-icon">🔒</span> Log Out';
+      setEditorMode(true);
+    } else {
+      // Login failed
+      loginError.style.display = 'block';
+      setTimeout(() => {
+        loginError.style.display = 'none';
+      }, 3000);
     }
-    
-    // Update visual track
-    function updateTrackVisual(trackId, value) {
-      // Update untuk RMK dan FMS track
-      if (trackMap[trackId]) {
-        const trackElement = document.getElementById(trackMap[trackId]);
-        if (trackElement) {
-          trackElement.style.stroke = value ? 'red' : 'white';
-        }
-      } 
-      // Update untuk WBS track
-      else if (trackId.startsWith('jalur-')) {
-        const trackElement = document.getElementById(trackId === "jalur-1" ? trackId : `${trackId}-horizontal`);
-        if (trackElement) {
-          if (value) {
-            trackElement.classList.add('occupied');
-            trackElement.style.stroke = 'red';
-          } else {
-            trackElement.classList.remove('occupied');
-            trackElement.style.stroke = 'white';
+  });
+  
+  // Close modal when clicking outside
+  window.addEventListener('click', function(event) {
+    if (event.target === loginModal) {
+      loginModal.style.display = 'none';
+    }
+  });
+  
+  // Setup reset button
+  const resetButton = document.getElementById('reset');
+  if (resetButton) {
+    resetButton.addEventListener('click', function() {
+      if (!isLoggedIn) {
+        alert("Anda perlu login sebagai Editor untuk melakukan ini");
+        return;
+      }
+      
+      // Confirm reset
+      if (!confirm("Apakah Anda yakin ingin mereset semua jalur?")) {
+        return;
+      }
+      
+      // Clear all inputs on all tabs
+      clearInputs('cy2-1');
+      clearInputs('cy2-2');
+      clearInputs('cy2-3');
+      clearInputs('cy3a');
+      clearInputs('cy3b');
+      clearInputs('fms-1');
+      clearInputs('fms-2');
+      clearInputs('fms-3');
+      clearInputs('jalur-1');
+      clearInputs('jalur-2');
+      clearInputs('jalur-3');
+      clearInputs('jalur-4');
+      
+      // Reset all data in Firebase as well
+      tracksRef.set({})
+        .then(() => {
+          console.log("All tracks data reset in Firebase");
+          updateLastUpdateTime();
+        })
+        .catch(error => {
+          console.error("Error resetting tracks data:", error);
+        });
+      
+      // Show reset confirmation
+      const statusElement = document.getElementById('status');
+      if (statusElement) {
+        statusElement.textContent = "Semua jalur telah direset!";
+        setTimeout(() => {
+          statusElement.textContent = "Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.";
+        }, 3000);
+      }
+    });
+  }
+  
+  // Add input event listeners to all Ex KA input boxes
+  const allInputFields = document.querySelectorAll('input.input-box');
+  console.log("Found input fields:", allInputFields.length);
+  
+  allInputFields.forEach(input => {
+    console.log("Setting up listener for:", input.id);
+    input.addEventListener('input', function() {
+      if (isLoggedIn) {
+        const dataId = this.getAttribute('data-id');
+        if (dataId) {
+          const trackIdParts = dataId.split('-');
+          let trackId;
+          
+          if (trackIdParts.length >= 2) {
+            if (trackIdParts[1] === 'ex') {
+              // Handle format like "jalur-1-ex"
+              trackId = trackIdParts[0] + '-' + trackIdParts[1].split('ex')[0];
+            } else {
+              // Handle format like "cy2-1-ex"
+              trackId = trackIdParts[0] + '-' + trackIdParts[1];
+            }
+            
+            updateTrackData(trackId);
           }
         }
       }
-    }
-    
-    // Switch tab
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
       
-      // Get the button associated with this tab and make it active
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        if (btn.textContent.toLowerCase().includes(tabId)) {
-          btn.classList.add('active');
-        }
-      });
+      // Always update visual
+      updateTrackColor(this);
+    });
+  });
+  
+  // Add direct click listeners to departure buttons
+  const departureButtons = document.querySelectorAll('button[onclick^="clearInputs"]');
+  departureButtons.forEach(button => {
+    const originalOnclick = button.getAttribute('onclick');
+    button.removeAttribute('onclick');
+    
+    button.addEventListener('click', function() {
+      if (!isLoggedIn) {
+        alert("Anda perlu login sebagai Editor untuk melakukan ini");
+        return;
+      }
+      
+      const trackId = originalOnclick.match(/'([^']+)'/)[1];
+      clearInputs(trackId);
+    });
+  });
+  
+  // Clean all tracks initially
+  Object.keys(trackMap).forEach(trackId => {
+    updateTrackVisual(trackId, '');
+  });
+  
+  // Setup Firebase connection monitoring
+  connectionRef.on('value', (snap) => {
+    if (snap.val() === true) {
+      // Connected
+      connectionDot.classList.remove('offline');
+      connectionDot.classList.add('online');
+      connectionText.textContent = 'Online';
+      
+      // Load initial data
+      loadDataFromFirebase();
+    } else {
+      // Disconnected
+      connectionDot.classList.remove('online');
+      connectionDot.classList.add('offline');
+      connectionText.textContent = 'Offline';
     }
-  </script>
-</body>
-</html>
+  });
+  
+  // Setup real-time updates
+  tracksRef.on('value', (snapshot) => {
+    // Update the data display
+    updateDataFromFirebase(snapshot.val());
+  });
+});
+
+// Load data from Firebase
+function loadDataFromFirebase() {
+  tracksRef.once('value')
+    .then((snapshot) => {
+      console.log("Loaded initial data from Firebase");
+      updateDataFromFirebase(snapshot.val());
+      updateLastUpdateTime();
+    })
+    .catch((error) => {
+      console.error("Error loading data from Firebase:", error);
+    });
+}
+
+// Update UI with data from Firebase
+function updateDataFromFirebase(data) {
+  if (!data) {
+    console.log("No data available from Firebase");
+    return;
+  }
+  
+  // Turn off listeners before updating to prevent circular updates
+  const allInputs = document.querySelectorAll('input.input-box');
+  allInputs.forEach(input => {
+    input.removeEventListener('input', updateTrackColor);
+  });
+  
+  // Update each track's inputs
+  Object.keys(data).forEach(trackId => {
+    const trackData = data[trackId];
+    
+    // Update inputs
+    Object.keys(trackData).forEach(fieldType => {
+      if (fieldType !== 'lastUpdate' && fieldType !== 'updatedBy') {
+        const input = document.querySelector(`[data-id="${trackId}-${fieldType}"]`);
+        if (input) {
+          input.value = trackData[fieldType] || '';
+        }
+      }
+    });
+    
+    // Update visual
+    updateTrackVisual(trackId, trackData.ex || '');
+  });
+  
+  // Re-add listeners
+  allInputs.forEach(input => {
+    input.addEventListener('input', function() {
+      updateTrackColor(this);
+    });
+  });
+  
+  // Update last update time if data exists
+  if (Object.keys(data).length > 0) {
+    updateLastUpdateTime();
+  }
+}
+
+// ===== HELPER FUNCTIONS =====
+
+// Set editor mode
+function setEditorMode(isEditor) {
+  // Toggle editor-only elements
+  editorOnlyElements.forEach(element => {
+    if (isEditor) {
+      element.classList.remove('read-only');
+    } else {
+      element.classList.add('read-only');
+    }
+  });
+  
+  // Toggle input elements
+  const inputElements = document.querySelectorAll('.input-box');
+  inputElements.forEach(input => {
+    input.disabled = !isEditor;
+  });
+  
+  // Toggle buttons
+  const buttonElements = document.querySelectorAll('.editor-only button');
+  buttonElements.forEach(button => {
+    button.disabled = !isEditor;
+  });
+}
+
+// Clear inputs
+function clearInputs(trackId) {
+  console.log("Clearing inputs for track:", trackId);
+  
+  // Check if logged in
+  if (!isLoggedIn) {
+    alert("Anda perlu login sebagai Editor untuk melakukan ini");
+    return;
+  }
+  
+  // Clear in interface
+  const inputs = document.querySelectorAll(`[data-id^="${trackId}-"]`);
+  console.log("Found inputs to clear:", inputs.length);
+  
+  inputs.forEach(input => {
+    input.value = '';
+  });
+  
+  // Reset visual track color
+  updateTrackVisual(trackId, '');
+  
+  // Clear in Firebase
+  tracksRef.child(trackId).remove()
+    .then(() => {
+      console.log(`Track ${trackId} data cleared in Firebase`);
+      updateLastUpdateTime();
+    })
+    .catch(error => {
+      console.error(`Error clearing track ${trackId} data:`, error);
+    });
+  
+  // Show feedback message
+  const statusElement = document.getElementById('status');
+  if (statusElement) {
+    statusElement.textContent = `KA dari jalur ${trackId} telah berangkat!`;
+    setTimeout(() => {
+      statusElement.textContent = "Ketik Ex KA untuk aktifkan jalur. Klik 🚉 jika KA berangkat.";
+    }, 3000);
+  }
+}
+
+// Update visual track
+function updateTrackVisual(trackId, value) {
+  console.log("Updating visual for track:", trackId, "Value:", value, "Track element ID:", trackMap[trackId]);
+  
+  const trackElement = document.getElementById(trackMap[trackId]);
+  if (trackElement) {
+    if (value && value.trim() !== '') {
+      trackElement.style.stroke = 'red';
+      console.log("Set track to RED:", trackMap[trackId]);
+    } else {
+      trackElement.style.stroke = 'white';
+      console.log("Set track to WHITE:", trackMap[trackId]);
+    }
+  } else {
+    console.error("Track element not found:", trackMap[trackId]);
+  }
+}
+</script>
