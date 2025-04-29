@@ -935,7 +935,12 @@ database.ref('data').on('value', function(snapshot) {
       
       inputs.forEach(input => {
         input.value = '';
+      
+      // Clear di Firebase juga
+      ['ex', 'plan', 'sf', 'ren'].forEach(suffix => {
+        database.ref('data/' + trackId + '-' + suffix).set('');
       });
+});
       
       // Reset visual track color
       updateTrackVisual(trackId, '');
