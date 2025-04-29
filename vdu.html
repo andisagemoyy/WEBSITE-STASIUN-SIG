@@ -71,21 +71,17 @@
       margin: 0 6px;
     }
     .input-box {
-  width: 120px;
-  height: 30px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid white;
-  color: white;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 0 0 5px #ffffff;
-  border-radius: 6px;
-  backdrop-filter: blur(3px);
-}
-.input-box::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
+      width: 100px; /* Increased width */
+      height: 25px; /* Increased height */
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      text-align: center;
+      font-size: 14px; /* Increased font */
+    }
+    .input-box::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
     .controls {
       position: absolute;
       top: 10px;
@@ -729,6 +725,30 @@ const database = firebase.database();
     
     // ===== SETUP EVENT LISTENERS =====
     document.addEventListener('DOMContentLoaded', function() {
+
+// Tambah listener untuk menyimpan perubahan input ke Firebase
+document.querySelectorAll('.input-box').forEach(function(input) {
+  input.addEventListener('input', function() {
+    const dataId = this.getAttribute('data-id');
+    if (dataId) {
+      database.ref('data/' + dataId).set(this.value);
+    }
+  });
+});
+
+
+// Sinkronisasi data dari Firebase ke input dan track
+database.ref('data').on('value', function(snapshot) {
+  const data = snapshot.val() || {};
+  for (const [key, value] of Object.entries(data)) {
+    const input = document.querySelector(`[data-id="${key}"]`);
+    if (input && input.value !== value) {
+      input.value = value;
+      updateTrackColor(input);
+    }
+  }
+});
+
       console.log("DOM fully loaded");
       
       // Setup login elements
