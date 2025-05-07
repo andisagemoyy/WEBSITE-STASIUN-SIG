@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Situs resmi Stasiun Simpang, Divisi Regional III Palembang - PT KAI Indonesia">
     <title>KAI SIMPANG | Beranda</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -35,10 +36,22 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
 
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <style>
+        :root {
+            --primary-color: #0077ff;
+            --secondary-color: #ff4500;
+            --dark-color: #1c1c1c;
+            --light-color: #f8f9fa;
+        }
+
         body {
+            font-family: 'Poppins', sans-serif;
             transition: transform 1s ease, opacity 1s ease;
             transform-origin: center center;
+            scroll-behavior: smooth;
         }
 
         body.zoom-out {
@@ -46,19 +59,378 @@
             opacity: 0;
         }
 
-        #divisi .transition-link {
-            display: inline-block;
-            padding: 10px 20px;
+        /* Navbar Styling */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            transition: all 0.3s ease;
         }
 
-        /* ************************************************** TABLET ************************************************** */
+        .navbar-brand span {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
 
-        .center-card {
-            display: flex;
-            justify-content: center;
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: rotate(360deg);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            padding: 8px 15px !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        /* Hero Section Styling */
+        #hero {
+            background: linear-gradient(135deg, #f0f8ff, #e6f2ff);
+            padding: 120px 0 50px;
+        }
+
+        .banner {
+            padding: 30px 0;
+        }
+
+        .title h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .title h3 {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .btn-banner {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            margin-right: 10px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-banner a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-banner:hover {
+            background-color: #e03e00;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
+        }
+
+        .image img {
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease;
+        }
+
+        .image img:hover {
+            transform: scale(1.03);
+        }
+
+        /* Tentang Kami Section */
+        #tentang-kami {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+
+        #tentang-kami h1 {
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.5s ease;
+            border: 8px solid white;
+        }
+
+        .image-box img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .title-box {
+            line-height: 1.8;
+            text-align: justify;
+            padding: 20px;
+        }
+
+        /* Gallery Styling */
+        #gallery-scroll {
+            padding: 40px 0;
+        }
+
+        #gallery-scroll .carousel-item img {
+            height: 450px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(255, 69, 0, 0.7);
+            padding: 25px;
+            border-radius: 50%;
+        }
+
+        /* Struktur Organisasi */
+        #pengurusInti {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+        }
+
+        .custom-card {
+            width: 18rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin: 15px auto;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-card img {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .custom-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .custom-card .card-body {
+            padding: 20px;
+        }
+
+        .custom-card .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .custom-card .card-text {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        /* Divisi Section */
+        #divisi {
+            padding: 70px 0;
+        }
+
+        #divisi .figure {
+            transition: all 0.5s ease;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #divisi .figure:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #divisi .figure-img {
+            border-radius: 15px;
+            transition: all 0.5s ease;
+        }
+
+        #divisi .figure:hover .figure-img {
+            transform: scale(1.05);
+        }
+
+        .figure-caption {
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+
+        /* Back to Top Button */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 25px;
+            cursor: pointer;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #scrollToTopBtn:hover {
+            transform: translateY(-5px);
+            background-color: #e03e00;
+        }
+
+        /* Footer Styling */
+        #footer {
+            background: linear-gradient(135deg, #1c1c1c, #333);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-logo {
+            height: 180px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .social-icons {
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            font-size: 28px;
+            margin: 0 10px;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .social-icons a:hover {
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        #footer h2 {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        #footer p {
+            margin-bottom: 15px;
+        }
+
+        #footer a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        #footer a:hover {
+            color: var(--secondary-color);
+        }
+
+        .download-button {
+            width: 200px;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .download-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Animasi */
+        .fadeIn {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 992px) {
+            .title h1 {
+                font-size: 2.2rem;
+            }
+            .title h3 {
+                font-size: 1.5rem;
+            }
+            .title-box {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #hero {
+                padding: 100px 0 30px;
+            }
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            .image-box img {
+                max-width: 80%;
+                margin-bottom: 30px;
+            }
+            .swiper-slide {
+                display: flex;
+                justify-content: center;
+            }
+            #gallery-scroll .carousel-item img {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .title h1 {
+                font-size: 1.5rem;
+            }
+            .btn-banner {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                display: block;
+                width: 100%;
+            }
+            .image-box img {
+                max-width: 70%;
+            }
+            #gallery-scroll .carousel-item img {
+                height: 250px;
+            }
+            .footer-logo {
+                height: 150px;
+            }
         }
     </style>
-
 </head>
 
 <body>
@@ -66,11 +438,11 @@
     <section id="hero">
         <div class="container-fluid">
             <!-- Navbar Start -->
-            <nav class="navbar navbar-expand-lg bg-body-tranparant">
+            <nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary">
                 <div class="container">
                     <a class="navbar-brand" href="index.html">
-                        <img src="assets/logo (2).png" alt="Logo" width="50" height="45" class="d-inline-block align-text-top">
-                        <span>KAI | SIG</span>
+                        <img src="assets/logo (2).png" alt="Logo KAI" width="50" height="45" class="d-inline-block align-text-top">
+                        <span>KAI | SIMPANG</span>
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navigasi-bar"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,25 +450,24 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-end" id="navigasi-bar">
                         <ul class="navbar-nav me-end mb-2 mb-lg-0 ">
-            
                             <li class="nav-item">
-                                <a class="nav-link hvr-underline-from-left" aria-current="page" href="index.html">Beranda</a>
+                                <a class="nav-link hvr-underline-from-left active" aria-current="page" href="index.html">Beranda</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link hvr-underline-from-left" aria-current="page" href="#tentang-kami">Tentang
-                                    Kami</a>
-                            </li>
-                            
-                            <li class="nav-item">
-                                <a class="nav-link hvr-underline-from-left" aria-current="page" href="kalkulator.html">Kalkulator Kelka</a>
+                                <a class="nav-link hvr-underline-from-left" href="#tentang-kami">Tentang Kami</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link hvr-underline-from-left" aria-current="page" href="vdu.html">VDU TOOLS</a>
+                                <a class="nav-link hvr-underline-from-left" href="#gallery-scroll">Galeri</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link hvr-underline-from-left" aria-current="page" href="saran.html">Saran</a>
+                                <a class="nav-link hvr-underline-from-left" href="kalkulator.html">Kalkulator Kelka</a>
                             </li>
-                            
+                            <li class="nav-item">
+                                <a class="nav-link hvr-underline-from-left" href="vdu.html">VDU TOOLS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link hvr-underline-from-left" href="saran.html">Saran</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -107,74 +478,33 @@
             <div class="container banner">
                 <div class="container">
                     <div class="row align-items-center">
-
-                        <div class="col-lg-6 title">
-                            <h3 class="title-welcome" style="color: orangered;">STASIUN SIMPANG</h3>
-                            <h1 style="color: orangered;">DIVISI REGIONAL III PALEMBANG</h1>
+                        <div class="col-lg-6 title" data-aos="fade-right" data-aos-duration="1000">
+                            <h3 class="title-welcome" style="color: var(--secondary-color);">SELAMAT DATANG DI</h3>
+                            <h1 style="color: var(--primary-color);">STASIUN SIMPANG</h1>
+                            <h3 style="color: var(--secondary-color);">DIVISI REGIONAL III PALEMBANG</h3>
+                            <p class="mt-3">Melayani dengan sepenuh hati, menghubungkan destinasi Anda di Sumatera Selatan</p>
                             
-                           <!-- Tombol untuk Gallery -->
-<button type="button" class="btn btn-secondary btn-banner hvr-grow">
-    <a href="gallery.html" target="_blank">GALLERY</a>
-</button>
+                            <!-- Tombol Gallery -->
+                            <button type="button" class="btn btn-secondary btn-banner hvr-grow">
+                                <a href="gallery.html" target="_blank"><i class="bi bi-images"></i> GALLERY</a>
+                            </button>
 
-<!-- Pemutar Musik -->
-<audio id="linkmp3" loop>
-    <source src="assets/audio/MARS_KAI.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
+                            <!-- Pemutar Musik -->
+                            <audio id="linkmp3" loop>
+                                <source src="assets/audio/MARS_KAI.mp3" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
 
-<!-- Tombol Play/Pause dengan Tampilan yang Sama -->
-<button id="playPauseBtn" class="btn btn-secondary btn-banner hvr-grow">▶ MARS KAI</button>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var audio = document.getElementById("linkmp3");
-        var playPauseBtn = document.getElementById("playPauseBtn");
-
-        // Matikan autoplay agar tidak memulai sendiri
-        audio.autoplay = false;
-        
-        // Fungsi Play/Pause
-        playPauseBtn.addEventListener("click", function () {
-            if (audio.paused) {
-                audio.play();
-                playPauseBtn.textContent = "⏸ MARS KAI";
-            } else {
-                audio.pause(); // Sekarang tombol pause hanya akan menjeda
-                playPauseBtn.textContent = "▶ MARS KAI";
-            }
-        });
-    });
-</script>
-
-
-                                    <script>
-                                        var audio = document.getElementById("linkmp3");
-                                        var playPauseBtn = document.getElementById("playPauseBtn");
-                                
-                                        playPauseBtn.addEventListener("click", function () {
-                                            if (audio.paused) {
-                                                audio.play();
-                                                playPauseBtn.innerHTML = "⏸ Mars Kai";
-                                            } else {
-                                                audio.pause();
-                                                playPauseBtn.innerHTML = "▶ Mars Kai";
-                                            }
-                                        });
-                                
-                                        document.addEventListener('click', function () {
-                                            if (audio.paused) {
-                                                audio.play();
-                                            }
-                                        });
-                                    </script>
+                            <!-- Tombol Play/Pause -->
+                            <button id="playPauseBtn" class="btn btn-secondary btn-banner hvr-grow">
+                                <i class="bi bi-play-fill"></i> MARS KAI
+                            </button>
                         </div>
-                        <div class="col-lg-6 image">
+                        <div class="col-lg-6 image" data-aos="fade-left" data-aos-duration="1000">
                             <figure class="figure">
-                                <img src="assets/hero/fotoberanda.jpeg" class="figure-img img-fluid rounded" alt="...">
+                                <img src="assets/hero/fotoberanda.jpeg" class="figure-img img-fluid rounded" alt="Stasiun Simpang">
                             </figure>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -186,539 +516,492 @@
     <!-- Tentang Kami Start -->
     <section id="tentang-kami">
         <div class="container-fluid tentang">
-
             <div class="row align-items-center title">
-                <div class="col-lg-12 text-center">
+                <div class="col-lg-12 text-center" data-aos="fade-up" data-aos-duration="800">
                     <h1 class="hvr-underline-from-left">Tentang Kami</h1>
                 </div>
             </div>
             <div class="row align-items-center describe">
-                <div class="col-lg-6 col-md-12 col-sm-12 text-center image-box">
-                    <img src="assets/logo (2).png" class="rounded-3" style="height: 400px; width: 400px;" alt="">
+                <div class="col-lg-6 col-md-12 col-sm-12 text-center image-box" data-aos="zoom-in" data-aos-duration="1000">
+                    <img src="assets/logo (2).png" class="rounded-3" alt="Logo KAI Simpang">
                 </div>
-                <div class="col-lg-6 col-md-12 col-sm-12 title-box" style="color: rgb(4, 0, 255);">
+                <div class="col-lg-6 col-md-12 col-sm-12 title-box" data-aos="fade-left" data-aos-duration="1000">
+                    <h3 class="mb-4" style="color: var(--primary-color);">Stasiun Simpang</h3>
+                    <p style="color: #333;">
+                        Selamat datang di halaman resmi Stasiun Simpang, bagian dari Divisi Regional III Palembang. Stasiun Simpang 
+                        merupakan stasiun kereta api besar C yang berlokasi di Kabupaten Ogan Ilir, Sumatera Selatan. 
+                    </p>
+                    <p style="color: #333;">
+                        Sebagai salah satu titik strategis dalam jalur kereta api Sumatera Selatan, stasiun ini berperan penting dalam 
+                        angkutan barang, khususnya dalam mendukung distribusi batu bara.
+                    </p>
+                    <hr>
+                    <p style="color: #333;">
+                        Dengan fasilitas yang terus berkembang, termasuk jalur ganda dan depo gerbong, Stasiun Simpang menjadi pusat 
+                        aktivitas transportasi yang menghubungkan berbagai wilayah. Kami berkomitmen untuk memberikan pelayanan terbaik 
+                        bagi para pengguna jasa kereta api, serta terus berkontribusi dalam pengembangan infrastruktur transportasi di Indonesia.
+                    </p>
+                </div>
+            </div>
 
-                    Selamat datang di halaman resmi Stasiun Simpang, bagian dari Divisi Regional III Palembang.  
-                    Stasiun Simpang merupakan stasiun kereta api besar C yang berlokasi di Kabupaten Ogan Ilir, Sumatera Selatan. Sebagai salah satu titik strategis dalam jalur kereta api Sumatera Selatan, stasiun ini berperan penting dalam angkutan barang, khususnya dalam mendukung distribusi batu bara.  
-                      
-                    <br>
-                    <hr>
-                    Dengan fasilitas yang terus berkembang, termasuk jalur ganda dan depo gerbong, Stasiun Simpang menjadi pusat aktivitas transportasi yang menghubungkan berbagai wilayah. Kami berkomitmen untuk memberikan pelayanan terbaik bagi para pengguna jasa kereta api, serta terus berkontribusi dalam pengembangan infrastruktur transportasi di Indonesia.
-                </div>
-            </div>
-            <div class="row mt-5">
-                <div class="col-12 p-3">
-                    <hr>
-                </div>
-            </div>
-            <!-- <div class="row align-items-center visimisi">
-                <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center">
-                    <div class="card text-center hvr-float" style="width: 25rem; height: 350px;">
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#exampleModalCenter">
-                            VISI
+            <!-- Gallery Scroll Section -->
+            <section id="gallery-scroll" data-aos="fade-up" data-aos-duration="1000">
+                <div class="container mt-5">
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <h2 style="color: var(--primary-color);">Galeri Stasiun</h2>
+                            <p>Jelajahi fasilitas dan kegiatan di Stasiun Simpang</p>
+                        </div>
+                    </div>
+                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Indicators -->
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+                        </div>
+
+                        <!-- Foto-foto di dalam Carousel -->
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="assets/NEWS/foto 2.jpeg" class="d-block w-100 rounded" alt="Kegiatan 1">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Pelayanan Prima</h5>
+                                    <p>Komitmen kami untuk memberikan pelayanan terbaik</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="assets/NEWS/foto 3.jpeg" class="d-block w-100 rounded" alt="Kegiatan 2">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Infrastruktur Modern</h5>
+                                    <p>Fasilitas terkini untuk kenyamanan pengguna jasa</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img src="assets/NEWS/foto 1.jpeg" class="d-block w-100 rounded" alt="Kegiatan 3">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Tim Profesional</h5>
+                                    <p>Didukung oleh tim yang berpengalaman dan terlatih</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tombol navigasi -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
                         </button>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center">
-                    <div class="card text-center hvr-float" style="width: 25rem; height: 350px;">
-                        <div class="card-body" data-bs-toggle="modal" data-bs-target="#exampleModalToggle2">
-                            <p class="card-text">MISI</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row align-items-center mt-5">
-                <div class="modal fade" id="exampleModalToggle" aria-hidden="true"
-                    aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Visi</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                "Menjadikan Himpunan Mahasiswa Perbankan Syariah sebagai wadah yang inklusif,
-                                berinovasi, dan
-                                memberdayakan mahasiswa untuk mencapai prestasi akademik maupun non-akademik serta
-                                pengembangan
-                                diri"
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2"
-                                    data-bs-toggle="modal">Misi</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="exampleModalToggle2" aria-hidden="true"
-                    aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Misi</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                1. Menginisiasi program kerja kolaboratif, pelatihan soft skill, dan mentoring untuk
-                                meningkatkan
-                                prestasi akademik maupun non-akademik mahasiswa. <br>
-                                2. Mendorong kreativitas dan inovasi melalui pengembangan program unggulan yang relevan
-                                dengan
-                                kebutuhan mahasiswa dan prodi Perbankan Syariah. <br>
-                                3. Menjadi suara mahasiswa dalam menghadapi isu-isu kritis, serta mendukung kebutuhan
-                                dan aspirasi
-                                mahasiswa di tingkat prodi Perbankan Syariah. <br>
-                                4. Menyelenggarakan kegiatan pembinaan karir, magang, dan seminar untuk mempersiapkan
-                                mahasiswa
-                                menghadapi tantangan dunia kerja.
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" data-bs-target="#exampleModalToggle"
-                                    data-bs-toggle="modal">Visi</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-       <!-- Gallery Scroll Start -->
-<section id="gallery-scroll">
-    <div class="container mt-5">
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-            
-            <!-- Indicators (bulatan navigasi) -->
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
-            </div>
-
-            <!-- Foto-foto di dalam Carousel -->
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="assets/NEWS/foto 2.jpeg" class="d-block w-100 rounded" alt="Kegiatan 1">
-                </div>
-                <div class="carousel-item">
-                    <img src="assets/NEWS/foto 3.jpeg" class="d-block w-100 rounded" alt="Kegiatan 2">
-                </div>
-                <div class="carousel-item">
-                    <img src="assets/NEWS/foto 1.jpeg" class="d-block w-100 rounded" alt="Kegiatan 3">
-                </div>
-            </div>
-
-            <!-- Tombol navigasi (warna hitam) -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </button>
-        </div>
-    </div>
-</section>
-
-<!-- Tambahkan Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Aktifkan Carousel Manual -->
-<script>
-    var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
-        interval: 3000, // Auto-slide setiap 3 detik
-        ride: 'carousel',
-        pause: 'hover'
-    });
-</script>
-
-
-
-
-            <div class="row align-items-center mt-5">
-                <figure class="text-center">
-                    <blockquote class="blockquote">
-                        <p style="color: rgb(0, 119, 255); font-weight: bold;">VISI DAN MISI PT KAI</p>
-
-                    </blockquote>
-                    <figcaption class="blockquote-footer mt-2" style="color:orangered;">
-                        Menjadi solusi ekosistem transportasi terbaik untuk Indonesia <cite title="Source Title">
-                            Menyediakan sistem transportasi yang aman, efisien, berbasis digital, dan berkembang pesat untuk memenuhi kebutuhan pelanggan. 
-                            
-                            Mengembangkan solusi transportasi massal yang terintegrasi melalui investasi dalam sumber daya manusia, infrastruktur, dan teknologi. 
-                            
-                            Memajukan pembangunan nasional melalui kemitraan dengan para pemangku kepentingan, termasuk memprakarsai dan melaksanakan pengembangan infrastruktur penting terkait transportasi</cite>
-                    </figcaption>
-                </figure>
-            </div>
+            </section>
 
             <div class="row align-items-center mt-5 p-3">
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    
-                    <a href="index.html"
-                        class="btn btn-primary hvr-float" target="_blank">Struktur Organisasi</a>
+                <div class="col-12 text-center">
+                    <a href="index.html" class="btn btn-primary btn-lg hvr-float" target="_blank">
+                        <i class="bi bi-diagram-3"></i> Lihat Struktur Organisasi
+                    </a>
                 </div>
             </div>
-
         </div>
     </section>
     <!-- Tentang Kami End -->
 
     <!-- SO (Pengurus Inti) Start -->
-<section id="pengurusInti">
-    <div class="container pengurus">
-
-        <!-- Judul -->
-        <div class="row text-center">
-            <div class="col-12">
-                <h1 class="text-dark fw-bold">Struktur Organisasi</h1>
-                <h2 class="text-secondary" style="color: #ff4500;">STASIUN SIMPANG</h2>
+    <section id="pengurusInti">
+        <div class="container pengurus">
+            <!-- Judul -->
+            <div class="row text-center">
+                <div class="col-12" data-aos="fade-up" data-aos-duration="800">
+                    <h1 class="text-dark fw-bold mb-2">Struktur Organisasi</h1>
+                    <h2 class="text-secondary mb-5" style="color: var(--secondary-color);">STASIUN SIMPANG</h2>
+                </div>
             </div>
-        </div>
 
-        <!-- Swiper -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="swiper mySwiper">
-                    <div class="swiper-wrapper">
-                        <!-- Kepala Stasiun -->
-                        <div class="swiper-slide">
+            <!-- Pengurus Cards -->
+            <div class="row mt-4">
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
+                    <div class="card custom-card hvr-float">
+                        <img src="assets/bph/ksb.png" class="card-img-top" alt="Kepala Stasiun">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">RISTIANTO</h5>
+                            <p class="card-text">Kepala Stasiun</p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="text-secondary me-2"><i class="bi bi-envelope"></i></a>
+                                <a href="#" class="text-secondary"><i class="bi bi-telephone"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
+                    <div class="card custom-card hvr-float">
+                        <img src="assets/bph/WKSB.png" class="card-img-top" alt="Wakil Kepala Stasiun">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">EKO WIYONO PURWOKO</h5>
+                            <p class="card-text">Wakil Kepala Stasiun</p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="text-secondary me-2"><i class="bi bi-envelope"></i></a>
+                                <a href="#" class="text-secondary"><i class="bi bi-telephone"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="300">
+                    <div class="card custom-card hvr-float">
+                        <img src="assets/bph/KASUBUR1.png" class="card-img-top" alt="Kasubur PERKA 1">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">RISKY SAPUTRA</h5>
+                            <p class="card-text">Kasubur PERKA 1</p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="text-secondary me-2"><i class="bi bi-envelope"></i></a>
+                                <a href="#" class="text-secondary"><i class="bi bi-telephone"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="400">
+                    <div class="card custom-card hvr-float">
+                        <img src="assets/bph/KASUBUR2.png" class="card-img-top" alt="Kasubur PERKA 2">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">FRENKY APRIYONO</h5>
+                            <p class="card-text">Kasubur PERKA 2</p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="text-secondary me-2"><i class="bi bi-envelope"></i></a>
+                                <a href="#" class="text-secondary"><i class="bi bi-telephone"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tambahan Staff -->
+            <div class="row mt-4">
+                <div class="col-12 text-center mb-4">
+                   
+                </div>
+                
+                <div class="collapse" id="collapseStaff">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800">
                             <div class="card custom-card hvr-float">
-                                <img src="assets/bph/ksb.png" class="card-img-top" alt="Kepala Stasiun">
+                                <img src="assets/placeholder.jpg" class="card-img-top" alt="Staff">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">RISTIANTO</h5>
-                                    <p class="card-text">Kepala Stasiun</p>
+                                    <h5 class="card-title">STAFF 1</h5>
+                                    <p class="card-text">Jabatan Staff</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Wakil Kepala Stasiun -->
-                        <div class="swiper-slide">
+                        
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800">
                             <div class="card custom-card hvr-float">
-                                <img src="assets/bph/WKSB.png" class="card-img-top" alt="Wakil Kepala Stasiun">
+                                <img src="assets/placeholder.jpg" class="card-img-top" alt="Staff">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Eko Wiyono Purwoko</h5>
-                                    <p class="card-text">Wakil Kepala Stasiun</p>
+                                    <h5 class="card-title">STAFF 2</h5>
+                                    <p class="card-text">Jabatan Staff</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Kasubur PERKA 1 -->
-                        <div class="swiper-slide">
+                        
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800">
                             <div class="card custom-card hvr-float">
-                                <img src="assets/bph/KASUBUR1.png" class="card-img-top" alt="Kasubur PERKA 1">
+                                <img src="assets/placeholder.jpg" class="card-img-top" alt="Staff">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Risky Saputra</h5>
-                                    <p class="card-text">Kasubur PERKA 1</p>
+                                    <h5 class="card-title">STAFF 3</h5>
+                                    <p class="card-text">Jabatan Staff</p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Kasubur PERKA 2 -->
-                        <div class="swiper-slide">
+                        
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4" data-aos="zoom-in" data-aos-duration="800">
                             <div class="card custom-card hvr-float">
-                                <img src="assets/bph/KASUBUR2.png" class="card-img-top" alt="Kasubur PERKA 2">
+                                <img src="assets/placeholder.jpg" class="card-img-top" alt="Staff">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Frenky Apriyono</h5>
-                                    <p class="card-text">Kasubur PERKA 2</p>
+                                    <h5 class="card-title">STAFF 4</h5>
+                                    <p class="card-text">Jabatan Staff</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Navigasi Swiper -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-<!-- SO (Pengurus Inti) End -->
-
-<style>
-    /* Styling Struktur Organisasi */
-    .custom-card {
-        width: 18rem;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out;
-        overflow: hidden;
-    }
-
-    .custom-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .custom-card img {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        width: 100%;
-        height: 220px;
-        object-fit: cover;
-    }
-
-    .custom-card .card-body {
-        padding: 15px;
-    }
-
-    .custom-card .card-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: orangered;
-    }
-
-    .custom-card .card-text {
-        font-size: 1rem;
-        color: #555;
-    }
-
-    /* Swiper Custom */
-    .swiper {
-        padding-bottom: 50px;
-    }
-
-    .swiper-button-next,
-    .swiper-button-prev {
-        color: orangered;
-    }
-
-    @media (max-width: 768px) {
-        .swiper-slide {
-            display: flex;
-            justify-content: center;
-        }
-    }
-</style>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-<script>
-    var swiper = new Swiper(".mySwiper", {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        breakpoints: {
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 }
-        }
-    });
-</script>
-
-    <!-- SO (Divisi) Start -->
-    <section id="divisi">
-        <div class="container box-divisi">
-
-            <!-- BPH  -->
-            <!-- <div class="row align-items-center">
-                <div class="col-12 text-center">
-                    <figure class="figure hvr-float">
-                        <a href="BPH.html" class="transition-link">
-                            <img src="assets/divisi.png" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption bph"> Badan Pengurus Harian
-                        </figcaption>
-                    </figure>
-                </div>
-            </div> -->
-
-            <!-- BPH & Media Informasi  -->
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/bph.png" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"> 
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/MediaInf.png" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"><span></span> 
-                        </figcaption>
-                    </figure>
-                </div>
-            </div>
-            <!-- Human Development & Fundraising  -->
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/HumanD.JPG" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"><span>
-                            </span> </figcaption>
-                    </figure>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/fundaraising (2).JPG" class="figure-img img-fluid rounded"
-                                alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"><span></span> </figcaption>
-                    </figure>
-                </div>
-            </div>
-            <!-- Sosial Advokasi & Public Relations  -->
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/SosialA.JPG" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"><span></span> 
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <figure class="figure hvr-float">
-                        <a href="" class="transition-link">
-                            <img src="assets/divisi/PublicR.JPG" class="figure-img img-fluid rounded" alt="...">
-                        </a>
-                        <figcaption class="figure-caption text-center"><span></span> 
-                        </figcaption>
-                    </figure>
                 </div>
             </div>
         </div>
     </section>
-    <!-- SO (Divisi) End -->
+    <!-- SO (Pengurus Inti) End -->
 
-    <button id="scrollToTopBtn" title="Go to top"><i class="bi bi-arrow-up-short hvr-float"></i></button>
+    <!-- Divisi Section Enhanced -->
+    <section id="divisi">
+        <div class="container box-divisi">
+            <div class="row mb-5">
+                <div class="col-12 text-center" data-aos="fade-up" data-aos-duration="800">
+                   
 
-    <!-- Footer Start -->
-<footer id="footer" class="py-4">
-    <div class="container">
-        <div class="row align-items-center">
+            <!-- BPH & Media Informasi -->
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/bph.png" class="figure-img img-fluid rounded" alt="Transportasi Barang">
+                            <div class="overlay-caption">
+                              
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                          
+                    </figure>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/MediaInf.png" class="figure-img img-fluid rounded" alt="Pusat Informasi">
+                            <div class="overlay-caption">
+                               
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                           
+                    </figure>
+                </div>
+            </div>
+            
+            <!-- Fasilitas Umum & Keamanan -->
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/HumanD.JPG" class="figure-img img-fluid rounded" alt="Fasilitas Umum">
+                            <div class="overlay-caption">
+                                
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                           
+                    </figure>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/fundaraising (2).JPG" class="figure-img img-fluid rounded" alt="Keamanan">
+                            <div class="overlay-caption">
+                               
+                            </div>
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                            >
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+            
+            <!-- Layanan Jalur & Layanan Digital -->
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="500">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/SosialA.JPG" class="figure-img img-fluid rounded" alt="Layanan Jalur">
+                            <div class="overlay-caption">
+                               
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                           
+                    </figure>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="600">
+                    <figure class="figure hvr-float">
+                        <a href="#" class="transition-link">
+                            <img src="assets/divisi/PublicR.JPG" class="figure-img img-fluid rounded" alt="Layanan Digital">
+                            <div class="overlay-caption">
+                               
+                            </div>
+                        </a>
+                        <figcaption class="figure-caption text-center">
+                            
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+            
+            <!-- CTA Section -->
+            <div class="row mt-4">
+                <div class="col-12 text-center" data-aos="fade-up" data-aos-duration="800">
+                    <div class="card p-4 bg-light border-0 shadow-sm">
 
-            <!-- Logo & Media Sosial -->
-            <div class="col-lg-6 col-md-6 col-sm-12 text-center">
-                <a href="#hero">
-                    <img src="assets/Logo_Kabinet.PNG" class="footer-logo" alt="Logo">
-                </a>
-                <div class="social-icons mt-3">
-                    <a href="https://www.instagram.com/ST_SIMPANG/#/" target="_blank">
-                        <i class="bi bi-instagram hvr-float"></i>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="https://wa.me/62-859-3972-3529" class="btn btn-primary me-2 hvr-grow">
+                                <i class="bi bi-whatsapp me-2"></i> Hubungi Kami
+                            </a>
+                            <a href="saran.html" class="btn btn-outline-primary hvr-grow">
+                                <i class="bi bi-chat-text me-2"></i> Kirim Saran
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Divisi Section End -->
+
+    <!-- Back to Top Button -->
+    <button id="scrollToTopBtn" title="Kembali ke Atas"><i class="bi bi-arrow-up-short hvr-float"></i></button>
+
+    <!-- Footer Enhanced -->
+    <footer id="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Logo & Media Sosial -->
+                <div class="col-lg-6 col-md-6 col-sm-12 text-center mb-4" data-aos="fade-up" data-aos-duration="800">
+                    <a href="#hero">
+                        <img src="assets/Logo_Kabinet.PNG" class="footer-logo" alt="Logo KAI">
                     </a>
-                    <a href="https://wa.me/62-859-3972-3529" target="_blank">
-                        <i class="bi bi-whatsapp hvr-float"></i>
-                    </a>
-                    <a href="mailto:stsimpangpalembang@gmail.com">
-                        <i class="bi bi-envelope hvr-float"></i>
+                    <div class="social-icons mt-3">
+                        <a href="https://www.instagram.com/ST_SIMPANG/#/" target="_blank" title="Instagram">
+                            <i class="bi bi-instagram hvr-float"></i>
+                        </a>
+                        <a href="https://wa.me/62-859-3972-3529" target="_blank" title="WhatsApp">
+                            <i class="bi bi-whatsapp hvr-float"></i>
+                        </a>
+                        <a href="mailto:stsimpangpalembang@gmail.com" title="Email">
+                            <i class="bi bi-envelope hvr-float"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@PTKAIOFFICIAL/" target="_blank" title="YouTube">
+                            <i class="bi bi-youtube hvr-float"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Informasi Kontak & Download Aplikasi -->
+                <div class="col-lg-6 col-md-6 col-sm-12 text-center mb-4" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                    <h2 class="mb-3">Hubungi Kami</h2>
+                    <p>
+                        <i class="bi bi-telephone-fill hvr-float me-2"></i> 
+                        <a href="https://wa.me/62-859-3972-3529" target="_blank">+62-859-3972-3529</a>
+                    </p>
+                    <p>
+                        <i class="bi bi-envelope-fill hvr-float me-2"></i> 
+                        <a href="mailto:stsimpangpalembang@gmail.com">stsimpangpalembang@gmail.com</a>
+                    </p>
+                    <p>
+                        <i class="bi bi-geo-alt-fill hvr-float me-2"></i> 
+                        <a href="https://maps.app.goo.gl/JdKqYdrKmvU1MuM8A" target="_blank">Stasiun Simpang, Kabupaten Ogan Ilir, Sumatera Selatan</a>
+                    </p>
+
+                    <!-- Tombol Download Aplikasi -->
+                    <a href="https://play.google.com/store/apps/details?id=com.kai.kaiticketing&hl=en-US" target="_blank">
+                        <img src="assets/bykai.png" class="download-button" alt="Download on Play Store">
                     </a>
                 </div>
             </div>
-
-            <!-- Informasi Kontak & Download Aplikasi -->
-            <div class="col-lg-6 col-md-6 col-sm-12 text-center">
-                <h2 class="mb-3">Hubungi Kami KAI SIG</h2>
-                <p>
-                    <i class="bi bi-telephone-fill hvr-float"></i> 
-                    <a href="https://wa.me/62-859-3972-3529" target="_blank">+62-859-3972-3529</a>
-                </p>
-                <p>
-                    <i class="bi bi-envelope-fill hvr-float"></i> 
-                    <a href="mailto:stsimpangpalembang@gmail.com">stsimpangpalembang@gmail.com</a>
-                </p>
-
-                <!-- Tombol Download Aplikasi -->
-                <a href="https://play.google.com/store/apps/details?id=com.kai.kaiticketing&hl=en-US" target="_blank">
-                    <img src="assets/bykai.png" class="download-button" alt="Download on Play Store">
-                </a>
+            
+            <!-- Quick Links -->
+            <div class="row mt-4">
+                <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <h5 class="mb-3" style="color: var(--secondary-color);">Link Cepat</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html"><i class="bi bi-chevron-right me-2"></i> Beranda</a></li>
+                        <li class="mb-2"><a href="#tentang-kami"><i class="bi bi-chevron-right me-2"></i> Tentang Kami</a></li>
+                        <li class="mb-2"><a href="#gallery-scroll"><i class="bi bi-chevron-right me-2"></i> Galeri</a></li>
+                        <li class="mb-2"><a href="saran.html"><i class="bi bi-chevron-right me-2"></i> Saran</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <h5 class="mb-3" style="color: var(--secondary-color);">Layanan</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="kalkulator.html"><i class="bi bi-chevron-right me-2"></i> Kalkulator Kelka</a></li>
+                        <li class="mb-2"><a href="vdu.html"><i class="bi bi-chevron-right me-2"></i> VDU Tools</a></li>
+                        <li class="mb-2"><a href="#"><i class="bi bi-chevron-right me-2"></i> Info Layanan</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+                    <h5 class="mb-3" style="color: var(--secondary-color);">PT KAI</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="https://kai.id/" target="_blank"><i class="bi bi-chevron-right me-2"></i> Website KAI</a></li>
+                        <li class="mb-2"><a href="https://kai.id/corporate/about-us" target="_blank"><i class="bi bi-chevron-right me-2"></i> Tentang KAI</a></li>
+                        <li class="mb-2"><a href="https://kai.id/news" target="_blank"><i class="bi bi-chevron-right me-2"></i> Berita KAI</a></li>
+                        <li class="mb-2"><a href="https://kai.id/career/" target="_blank"><i class="bi bi-chevron-right me-2"></i> Karir</a></li>
+                    </ul>
+                </div>
             </div>
-
-        </div>
-        <hr>
-        <div class="row p-3">
-            <div class="col-12 text-center">
-                <p>Copyright &copy; 2025 IT SIG</p>
+            
+            <hr>
+            
+            <div class="row p-3">
+                <div class="col-12 text-center">
+                    <p>Copyright &copy; 2025 PT KAI - Stasiun Simpang, Divisi Regional III Palembang. All Rights Reserved.</p>
+                    
             </div>
         </div>
-    </div>
-</footer>
-<!-- Footer End -->
+    </footer>
+    <!-- Footer End -->
 
+    <!-- AOS JS (Animation) -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Inicializar AOS Animation
+        AOS.init();
+        
+        // Audio Controls
+        document.addEventListener("DOMContentLoaded", function () {
+            var audio = document.getElementById("linkmp3");
+            var playPauseBtn = document.getElementById("playPauseBtn");
 
-<!-- Animasi & Desain CSS -->
-<style>
-    /* Footer Styling */
-    #footer {
-        background: linear-gradient(135deg, #1c1c1c, #333);
-        color: white;
-        text-align: center;
-    }
+            playPauseBtn.addEventListener("click", function () {
+                if (audio.paused) {
+                    audio.play();
+                    playPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i> MARS KAI';
+                } else {
+                    audio.pause();
+                    playPauseBtn.innerHTML = '<i class="bi bi-play-fill"></i> MARS KAI';
+                }
+            });
+        });
+        
+        // Scroll to Top Button
+        window.onscroll = function() {scrollFunction()};
 
-    .footer-logo {
-        height: 200px;
-        width: 200px;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .footer-logo:hover {
-        transform: scale(1.1);
-    }
-
-    /* Ikon Media Sosial */
-    .social-icons a {
-        font-size: 28px;
-        margin: 0 10px;
-        color: #ff4500;
-        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
-
-    .social-icons a:hover {
-        color: #00aced;
-        transform: scale(1.2);
-    }
-
-    /* Tombol Download Aplikasi */
-    .download-button {
-        width: 180px;
-        margin-top: 10px;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .download-button:hover {
-        transform: scale(1.1);
-    }
-
-    /* Link Hover */
-    a {
-        color: white;
-        text-decoration: none;
-    }
-
-    a:hover {
-        color: #ff4500;
-    }
-
-    /* Responsif */
-    @media (max-width: 768px) {
-        .footer-logo {
-            height: 150px;
-            width: 150px;
+        function scrollFunction() {
+            var scrollToTopBtn = document.getElementById("scrollToTopBtn");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollToTopBtn.style.display = "block";
+            } else {
+                scrollToTopBtn.style.display = "none";
+            }
+            
+            // Navbar effect on scroll
+            var navbar = document.querySelector('.navbar');
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                navbar.style.padding = "5px 0";
+                navbar.style.boxShadow = "0 4px 15px rgba(0, 0, 0, 0.1)";
+            } else {
+                navbar.style.padding = "10px 0";
+                navbar.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.1)";
+            }
         }
 
-        .social-icons a {
-            font-size: 24px;
-        }
-
-        .download-button {
-            width: 150px;
-        }
-    }
-</style>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="js/script.js"></script>
-
-
+        document.getElementById("scrollToTopBtn").onclick = function() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
+        
+        // Activate Bootstrap Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Carousel
+        var myCarousel = new bootstrap.Carousel(document.querySelector('#carouselExampleIndicators'), {
+            interval: 3000,
+            ride: 'carousel',
+            pause: 'hover'
+        });
+    </script>
+</body>
 </html>
