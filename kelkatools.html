@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Kalkulator Keterlambatan KA</title>
+    <link rel="shortcut icon" href="assets/logo (2).png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .preview-section {
+            background: #fff;
+            border: 2px solid #dee2e6;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .train-entry-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .train-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .train-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-datang { border-left-color: #dc3545; }
+        .status-berangkat { border-left-color: #28a745; }
+        .status-langsung { border-left-color: #ffc107; }
+
+        .database-preview {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .preview-header {
+            background: #343a40;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+
+        .preview-content {
+            padding: 20px;
+            height: 500px; /* Fixed height for preview iframe container */
+            overflow-y: auto;
+        }
+
+        .download-section {
+            background: #e9ecef;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #bee5eb;
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .train-entry-grid {
+                grid-template-columns: 1fr; /* Adjusted for better mobile view */
+                gap: 15px;
+            }
+            .train-entry-grid .form-group {
+                margin-bottom: 0; /* Remove margin if stacked */
+            }
+            .train-entry-grid button {
+                margin-top: 10px; /* Add some space if stacked */
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-train"></i> Generator Kalkulator Keterlambatan KA by ANDYKING</h1>
+            <p>Buat website kalkulator untuk stasiun se DAOP-DIVRE</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cog"></i> Konfigurasi Website
+                </h2>
+
+                <div class="form-group">
+                    <label for="stationNameInput">Nama Stasiun</label>
+                    <input type="text" id="stationNameInput" value="Stasiun Simpang">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label for="stationCodeInput">Kode Stasiun</label>
+                        <input type="text" id="stationCodeInput" value="SIG">
+                    </div>
+                    <div class="form-group">
+                        <label for="themeColorSelect">Warna Tema</label>
+                        <select id="themeColorSelect">
+                            <option value="#0073e6">Biru</option>
+                            <option value="#28a745">Hijau</option>
+                            <option value="#dc3545">Merah</option>
+                            <option value="#6f42c1">Ungu</option>
+                            <option value="#fd7e14">Oranye</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3 class="section-title">
+                    <i class="fas fa-plus-circle"></i> Tambah Jadwal KA/LOK
+                </h3>
+
+                <div class="alert">
+                    <strong>Info:</strong> Nomor KA/LOK bebas sesuai stasiun Anda. Fungsi: KALKULATOR keterlambatan saja, bukan tracking real-time.
+                </div>
+
+                <div class="train-entry-grid">
+                    <div class="form-group">
+                        <label for="trainNumberInput">Nomor KA/LOK (Bebas)</label>
+                        <input type="text" id="trainNumberInput" placeholder="Contoh: 123, KA456, L789">
+                    </div>
+                    <div class="form-group">
+                        <label for="trainStatusSelect">Status</label>
+                        <select id="trainStatusSelect">
+                            <option value="datang">DATANG</option>
+                            <option value="berangkat">BERANGKAT</option>
+                            <option value="langsung">LANGSUNG</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="trainTimeInput">Waktu GAPEKA</label>
+                        <input type="time" id="trainTimeInput">
+                    </div>
+                    <button class="btn btn-primary" onclick="tambahKA()">
+                        <i class="fas fa-plus"></i> Tambah
+                    </button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="datangCount">0</div>
+                        <div class="stat-label">Datang</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="berangkatCount">0</div>
+                        <div class="stat-label">Berangkat</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="langsungCount">0</div>
+                        <div class="stat-label">Langsung</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 10px; color: #495057;"><i class="fas fa-database"></i> Database Preview:</h4>
+                <div class="database-preview" id="databaseCode">
+const trainSchedule = {
+    // Data KA akan muncul di sini
+};
+
+const trainStatus = {
+    // Status KA akan muncul di sini  
+};
+                </div>
+
+                <div class="train-list" id="trainList"></div>
+
+                <button class="btn btn-success" onclick="buatWebsite()">
+                    <i class="fas fa-magic"></i> Generate Website
+                </button>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-header">
+                    <i class="fas fa-eye"></i> Preview Website
+                </div>
+                <div class="preview-content" id="previewArea">
+                    <p style="text-align: center; color: #6c757d; margin-top: 100px;">
+                        <i class="fas fa-info-circle" style="font-size: 48px; margin-bottom: 20px;"></i><br>
+                        Website preview akan muncul setelah generate
+                    </p>
+                </div>
+                <div class="download-section">
+                    <button class="btn btn-primary" onclick="downloadHTML()" id="downloadButton" disabled>
+                        <i class="fas fa-download"></i> Download Kode
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database utama
+        let dataKA = {};
+        let websiteHTML = '';
+
+        // Fungsi utama untuk menambah KA
+        function tambahKA() {
+            const nomorEl = document.getElementById('trainNumberInput');
+            const statusEl = document.getElementById('trainStatusSelect');
+            const waktuEl = document.getElementById('trainTimeInput');
+            
+            const nomor = nomorEl.value.trim().toUpperCase();
+            const status = statusEl.value;
+            const waktu = waktuEl.value;
+            
+            if (!nomor) {
+                alert('Masukkan nomor KA/LOK!');
+                nomorEl.focus();
+                return;
+            }
+            
+            if (!waktu) {
+                alert('Masukkan waktu GAPEKA!');
+                waktuEl.focus();
+                return;
+            }
+            
+            dataKA[nomor] = { waktu: waktu, status: status };
+            
+            nomorEl.value = '';
+            waktuEl.value = '';
+            // statusEl.selectedIndex = 0; // Reset status if needed
+            
+            updateSemuaTampilan();
+            tampilkanNotifikasi(`✅ ${nomor} berhasil ditambahkan!`);
+            nomorEl.focus();
+        }
+
+        function updateSemuaTampilan() {
+            updateDatabasePreview();
+            updateStatistik();
+            updateDaftarKA();
+        }
+
+        function updateDatabasePreview() {
+            const preview = document.getElementById('databaseCode');
+            let codeSchedule = 'const trainSchedule = {\n';
+            let codeStatus = 'const trainStatus = {\n';
+            
+            const entries = Object.entries(dataKA);
+            entries.forEach(([nomor, data], index) => {
+                codeSchedule += `    "${nomor}": "${data.waktu}"`;
+                
+                let statusText = '';
+                if (data.status === 'datang') statusText = 'Datang';
+                else if (data.status === 'berangkat') statusText = 'Berangkat';  
+                else if (data.status === 'langsung') statusText = 'Langsung';
+                
+                codeStatus += `    "${nomor}": "${statusText}"`;
+
+                if (index < entries.length - 1) {
+                    codeSchedule += ',\n';
+                    codeStatus += ',\n';
+                } else {
+                    codeSchedule += '\n';
+                    codeStatus += '\n';
+                }
+            });
+            
+            codeSchedule += '};\n\n';
+            codeStatus += '};';
+            preview.textContent = codeSchedule + codeStatus;
+        }
+
+        function updateStatistik() {
+            const total = Object.keys(dataKA).length;
+            let datang = 0, berangkat = 0, langsung = 0;
+            
+            for (let nomor in dataKA) {
+                const status = dataKA[nomor].status;
+                if (status === 'datang') datang++;
+                else if (status === 'berangkat') berangkat++;
+                else if (status === 'langsung') langsung++;
+            }
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('datangCount').textContent = datang;
+            document.getElementById('berangkatCount').textContent = berangkat;
+            document.getElementById('langsungCount').textContent = langsung;
+        }
+
+        function updateDaftarKA() {
+            const list = document.getElementById('trainList');
+            list.innerHTML = '';
+            
+            const sortedEntries = Object.entries(dataKA).sort(([,a], [,b]) => a.waktu.localeCompare(b.waktu));
+
+            for (const [nomor, data] of sortedEntries) {
+                const item = document.createElement('div');
+                item.className = `train-item status-${data.status}`;
+                item.innerHTML = `
+                    <div>
+                        <strong>${nomor}</strong> - ${data.waktu} 
+                        <span style="background: ${getStatusColor(data.status)}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">
+                            ${data.status.toUpperCase()}
+                        </span>
+                    </div>
+                    <button class="btn btn-danger" onclick="hapusKA('${nomor}')" aria-label="Hapus ${nomor}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            }
+        }
+
+        function hapusKA(nomor) {
+            delete dataKA[nomor];
+            updateSemuaTampilan();
+            tampilkanNotifikasi(`🗑️ ${nomor} dihapus`);
+        }
+
+        function getStatusColor(status) {
+            if (status === 'datang') return '#dc3545';
+            if (status === 'berangkat') return '#28a745';
+            if (status === 'langsung') return '#ffc107';
+            return '#6c757d';
+        }
+
+        function tampilkanNotifikasi(pesan) {
+            const notif = document.createElement('div');
+            notif.className = 'success-notification';
+            notif.textContent = pesan;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                if (notif.parentNode) {
+                    notif.parentNode.removeChild(notif);
+                }
+            }, 3000);
+        }
+
+        function buatWebsite() {
+            if (Object.keys(dataKA).length === 0) {
+                alert('Tambahkan minimal 1 KA terlebih dahulu!');
+                return;
+            }
+            
+            const namaStasiun = document.getElementById('stationNameInput').value;
+            const kodeStasiun = document.getElementById('stationCodeInput').value;
+            const warnaTema = document.getElementById('themeColorSelect').value;
+            
+            const scheduleObj = {};
+            const statusObj = {};
+            
+            for (let nomor in dataKA) {
+                const data = dataKA[nomor];
+                scheduleObj[nomor] = data.waktu;
+                
+                if (data.status === 'datang') statusObj[nomor] = 'Datang';
+                else if (data.status === 'berangkat') statusObj[nomor] = 'Berangkat';
+                else if (data.status === 'langsung') statusObj[nomor] = 'Langsung';
+            }
+            
+            websiteHTML = generateWebsiteHTML(namaStasiun, kodeStasiun, warnaTema, scheduleObj, statusObj);
+            
+            document.getElementById('previewArea').innerHTML = `
+                <iframe srcdoc="${websiteHTML.replace(/"/g, '&quot;')}" 
+                        style="width: 100%; height: 100%; border: none; border-radius: 8px;"></iframe>
+            `;
+            
+            document.getElementById('downloadButton').disabled = false;
+            tampilkanNotifikasi('🎉 Website berhasil dibuat!');
+        }
+
+        function generateWebsiteHTML(namaStasiun, kodeStasiun, warnaTema, scheduleObj, statusObj) {
+            const scheduleStr = JSON.stringify(scheduleObj, null, 4);
+            const statusStr = JSON.stringify(statusObj, null, 4);
+            
+            let themeColorTransparent = warnaTema + 'cc'; 
+            if (warnaTema.startsWith('rgb')) {
+                 themeColorTransparent = warnaTema.replace(')', ', 0.8)').replace('rgb', 'rgba');
+            }
+
+            // ** Label untuk checkbox disesuaikan dengan fungsi -1440 **
+            // Label ini mengimplikasikan bahwa Jadwal GAPEKA yang dibandingkan adalah untuk siklus hari berikutnya
+            // relatif terhadap Waktu Aktual yang dimasukkan.
+            const checkboxLabel = "Jadwal GAPEKA ini untuk Hari Berikutnya"; 
+
+            return `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Keterlambatan - ${namaStasiun}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --theme-color: ${warnaTema};
+            --theme-color-transparent: ${themeColorTransparent};
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            margin: 0;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 100%; 
+            color: #333; 
+            text-shadow: none; 
+        }
+        input, button:not(.close-button):not(.info-button) { /* Target specific buttons */
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box; 
+        }
+        button:not(.close-button):not(.info-button) { /* Target specific buttons */
+            background: var(--theme-color);
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        button:not(.close-button):not(.info-button):hover { /* Target specific buttons */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            line-height: 1.6; 
+        }
+        .judul {
+            color: #ffffff;
+            background-color: var(--theme-color);
+            padding: 15px;
+            display: inline-block;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .waktu {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: var(--theme-color-transparent);
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0; 
+        }
+        .checkbox-container input[type="checkbox"] {
+             width: auto; 
+             margin: 0;
+        }
+        .checkbox-container label {
+            color: var(--theme-color);
+            font-weight: bold;
+            font-size: 14px; 
+            cursor: pointer;
+        }
+        .terlambat { color: #e74c3c; font-weight: bold; }
+        .cepat { color: #27ae60; font-weight: bold; }
+        .tepat-waktu { color: var(--theme-color); font-weight: bold; } /* Added class */
+        .gapeka-time {
+            color: var(--theme-color);
+            font-weight: bold;
+            display: block; 
+            margin-bottom: 5px; 
+        }
+        .info-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--theme-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: none; 
+            padding:0; /* Reset padding */
+        }
+        .schedule-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px; 
+            box-sizing: border-box;
+        }
+        .schedule-modal.show { display: flex; }
+        .schedule-content {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 15px;
+            padding: 25px;
+            overflow-y: auto;
+            color: #333;
+            text-shadow: none; 
+            position: relative; 
+        }
+        .close-button {
+            position: absolute; 
+            top: 10px;
+            right: 15px;
+            font-size: 32px;
+            color: #777;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            width: auto; /* Override general button styles */
+            margin: 0;   /* Override general button styles */
+        }
+        .close-button:hover { background: transparent; box-shadow: none; transform: none;}
+
+        .schedule-modal h2 {
+            color: var(--theme-color);
+            margin-top:0; 
+            margin-bottom: 15px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .schedule-table th {
+            background-color: var(--theme-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .schedule-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+        .schedule-table td.train-number-cell { 
+            font-weight: bold;
+            color: var(--theme-color);
+        }
+        .schedule-table tr:nth-child(even) { background-color: #f8f9fa; }
+        @media (max-width: 768px) {
+            .container { margin: 20px auto; padding: 20px; }
+            .judul { font-size: 20px; }
+            .waktu { font-size: 16px; }
+            .result { font-size: 16px; }
+            .checkbox-container label { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <h2 class="judul">Kalkulator Keterlambatan KA (${kodeStasiun})</h2>
+    <p id="datetime" class="waktu">⏳ Loading...</p>
+    
+    <div class="container">
+        <input type="text" id="trainNumberCalcInput" placeholder="Masukkan Nomor KA/LOK" style="text-transform: uppercase;">
+        <input type="time" id="realTimeInput">
+        <div class="checkbox-container">
+            <input type="checkbox" id="gapekaForNextDayCheckbox">
+            <label for="gapekaForNextDayCheckbox">${checkboxLabel}</label>
+        </div>
+        <button onclick="calculateDelay()"> 
+            <i class="fas fa-calculator"></i> Hitung Keterlambatan
+        </button>
+        <div class="result" id="resultText">Hasil akan muncul di sini...</div>
+    </div>
+
+    <button class="info-button" onclick="toggleModal()" aria-label="Tampilkan Jadwal">
+        <i class="fas fa-list"></i>
+    </button>
+
+    <div id="scheduleModal" class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="scheduleModalTitle">
+        <div class="schedule-content">
+            <button class="close-button" onclick="toggleModal()" aria-label="Tutup Modal">×</button>
+            <h2 id="scheduleModalTitle">📋 Jadwal ${namaStasiun}</h2>
+            <table class="schedule-table">
+                <thead>
+                    <tr><th>Nomor KA/LOK</th><th>Waktu</th><th>Status</th></tr>
+                </thead>
+                <tbody id="scheduleTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const trainSchedule = ${scheduleStr};
+        const trainStatus = ${statusStr};
+        
+        function getTrainStatus(trainNumber) {
+            return trainStatus[trainNumber.toUpperCase()] || "Tidak Diketahui";
+        }
+        
+        function updateDateTime() {
+            const now = new Date();
+            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            document.getElementById("datetime").innerText = 
+                days[now.getDay()] + ", " + now.getDate() + " " + 
+                now.toLocaleString("id-ID", { month: "long" }) + " " + now.getFullYear() + " | " + 
+                now.getHours().toString().padStart(2, "0") + ":" + 
+                now.getMinutes().toString().padStart(2, "0") + ":" + 
+                now.getSeconds().toString().padStart(2, "0") + " WIB";
+        }
+        
+        function setRealTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, "0");
+            const minutes = now.getMinutes().toString().padStart(2, "0");
+            const realTimeInputEl = document.getElementById("realTimeInput");
+            if (realTimeInputEl) realTimeInputEl.value = hours + ":" + minutes;
+        }
+        
+        function calculateDelay() {
+            const trainNumberEl = document.getElementById("trainNumberCalcInput");
+            const realTimeEl = document.getElementById("realTimeInput");
+            const gapekaForNextDay = document.getElementById("gapekaForNextDayCheckbox").checked; // Adjusted ID
+            const resultEl = document.getElementById("resultText");
+
+            if (!trainNumberEl || !realTimeEl || !resultEl) return;
+            
+            let trainNumber = trainNumberEl.value.trim().toUpperCase();
+            const realTime = realTimeEl.value;
+
+            if (!trainNumber) {
+                resultEl.innerHTML = "<span style='color: orange;'>⚠️ Masukkan Nomor KA/LOK.</span>";
+                return;
+            }
+            if (!realTime) {
+                resultEl.innerHTML = "<span style='color: orange;'>⚠️ Masukkan Waktu Aktual.</span>";
+                return;
+            }
+            if (!trainSchedule[trainNumber]) {
+                resultEl.innerHTML = "<span style='color: #e74c3c;'>❌ Nomor KA/LOK tidak ditemukan!</span>";
+                return;
+            }
+
+            const gapekaTimeStr = trainSchedule[trainNumber];
+            const [gapekaHours, gapekaMinutes] = gapekaTimeStr.split(":").map(Number);
+            const [realHours, realMinutes] = realTime.split(":").map(Number);
+
+            const gapekaTotalMinutes = (gapekaHours * 60) + gapekaMinutes;
+            let realTotalMinutes = (realHours * 60) + realMinutes;
+
+            let finalDelayMinutes = realTotalMinutes - gapekaTotalMinutes;
+
+            // **Logika -1440 jika checkbox dicentang**
+            if (gapekaForNextDay) {
+                finalDelayMinutes -= 1440; 
+            }
+
+            let statusKA = getTrainStatus(trainNumber);
+            let delayClass, delayText;
+            const absDelayMinutes = Math.abs(finalDelayMinutes);
+            const hoursDelay = Math.floor(absDelayMinutes / 60);
+            const minutesDelay = absDelayMinutes % 60;
+
+            if (finalDelayMinutes === 0) {
+                delayText = "✅ TEPAT WAKTU";
+                delayClass = "tepat-waktu"; 
+            } else if (finalDelayMinutes > 0) {
+                delayText = \`🔴 Terlambat \${hoursDelay} jam \${minutesDelay} menit\`;
+                delayClass = "terlambat";
+            } else {
+                delayText = \`🟢 Lebih cepat \${hoursDelay} jam \${minutesDelay} menit\`;
+                delayClass = "cepat";
+            }
+            
+            resultEl.innerHTML = 
+                "<span class='gapeka-time'>📅 Jadwal GAPEKA (" + trainNumber + "): " + gapekaTimeStr + " (" + statusKA + ")</span>" +
+                "<span class='" + delayClass + "'>" + delayText + " (" + (finalDelayMinutes >= 0 ? "+" : "") + finalDelayMinutes + " menit)</span>";
+        }
+        
+        function toggleModal() {
+            const modal = document.getElementById("scheduleModal");
+            modal.classList.toggle("show");
+            if (modal.classList.contains("show")) populateScheduleTable();
+        }
+        
+        function populateScheduleTable() {
+            const tableBody = document.getElementById("scheduleTableBody");
+            if (!tableBody) return;
+            tableBody.innerHTML = ""; 
+            
+            Object.keys(trainSchedule).sort((a, b) => trainSchedule[a].localeCompare(trainSchedule[b]))
+                  .forEach(trainNum => {
+                const row = tableBody.insertRow();
+                row.innerHTML = \`<td class='train-number-cell'>\${trainNum}</td><td>\${trainSchedule[trainNum]}</td><td>\${getTrainStatus(trainNum)}</td>\`;
+            });
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            updateDateTime();
+            setRealTime();
+            setInterval(updateDateTime, 1000);
+
+            ["trainNumberCalcInput", "realTimeInput"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener("keypress", e => e.key === "Enter" && calculateDelay());
+            });
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && document.getElementById('scheduleModal').classList.contains('show')) toggleModal();
+            });
+        });
+    <\/script>
+</body>
+</html>`;
+        }
+
+        function downloadHTML() {
+            if (!websiteHTML) {
+                alert('⚠️ Generate website terlebih dahulu!');
+                return;
+            }
+            try {
+                const stationCode = document.getElementById('stationCodeInput').value;
+                const safeStationCode = stationCode ? stationCode.toLowerCase().replace(/[^a-z0-9]/g, '') : 'stasiun';
+                const fileName = `kalkulator-keterlambatan-${safeStationCode}.html`;
+                
+                const downloadBtn = document.getElementById('downloadButton');
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+                downloadBtn.disabled = true;
+                
+                const blob = new Blob([websiteHTML], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = fileName; a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    downloadBtn.innerHTML = originalText;
+                    downloadBtn.disabled = false;
+                    tampilkanNotifikasi(`📁 File ${fileName} berhasil didownload!`);
+                }, 100);
+            } catch (error) {
+                console.error('Error download:', error);
+                alert('❌ Gagal download file. Coba lagi!');
+                const downloadBtn = document.getElementById('downloadButton');
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download HTML';
+                downloadBtn.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const trainNumberEl = document.getElementById('trainNumberInput');
+            const trainTimeEl = document.getElementById('trainTimeInput');
+
+            if (trainNumberEl) {
+                 trainNumberEl.focus();
+                 trainNumberEl.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && trainTimeEl) trainTimeEl.focus();
+                });
+            }
+            if (trainTimeEl) {
+                trainTimeEl.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        tambahKA(); 
+                        // trainNumberEl.focus(); // Sudah dihandle di tambahKA()
+                    }
+                });
+            }
+            updateSemuaTampilan(); 
+        });
+
+        // function testData() {
+        //     dataKA = {
+        //         'KA123': { waktu: '08:30', status: 'datang' }, '456': { waktu: '14:15', status: 'berangkat' },
+        //         'L789': { waktu: '20:00', status: 'langsung' }, 'X01': {waktu: '23:50', status: 'berangkat'},
+        //         'Y02': {waktu: '00:15', status: 'datang'}
+        //     };
+        //     updateSemuaTampilan();
+        //     tampilkanNotifikasi('📊 Data test dimuat!');
+        // }
+        // testData(); // Uncomment to load test data
+    </script>
+</body>
+</html>
